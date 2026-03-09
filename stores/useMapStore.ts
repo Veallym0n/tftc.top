@@ -83,12 +83,20 @@ export const useMapStore = create<MapState>((set, get) => ({
   setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
   setShowLayerMenu: (showLayerMenu) => set({ showLayerMenu }),
   setLoading: (loading) => set({ loading }),
-  setToast: (toastMsg) => set({ toastMsg }),
+  setToast: (toastMsg) => {
+    set({ toastMsg });
+    if ((window as any)._toastTimeout) {
+      clearTimeout((window as any)._toastTimeout);
+    }
+  },
   setIsLocating: (isLocating) => set({ isLocating }),
 
   showToast: (msg) => {
     set({ toastMsg: msg });
-    setTimeout(() => set({ toastMsg: null }), 3000);
+    if ((window as any)._toastTimeout) {
+      clearTimeout((window as any)._toastTimeout);
+    }
+    (window as any)._toastTimeout = setTimeout(() => set({ toastMsg: null }), 3000);
   },
 
   // --- Settings Logic ---

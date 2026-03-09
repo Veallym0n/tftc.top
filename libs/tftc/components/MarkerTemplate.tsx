@@ -93,8 +93,14 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
                     interactive: false
                 });
                 (marker as any).circle = circle;
-                // 默认添加，后续可通过 zoom 控制
-                circlesLayer.addLayer(circle);
+                
+                // 只有当 marker 实际显示在地图上时（未被聚合），才添加冲突圈
+                marker.on('add', () => {
+                    circlesLayer.addLayer(circle);
+                });
+                marker.on('remove', () => {
+                    circlesLayer.removeLayer(circle);
+                });
             }
 
             // 事件绑定

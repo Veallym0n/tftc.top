@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef, useMemo } from 'react';
 import { MapContext } from '../context';
 import { MapErrorBoundary } from '../ErrorBoundary';
 import { GCMapProps } from '../types';
@@ -39,6 +39,8 @@ const GCMapInternal = forwardRef<GCMapRef, GCMapProps>(({
         const map = L.map(mapContainerRef.current, {
             center: initialCenter,
             zoom: initialZoom,
+            minZoom: 4,
+            maxZoom: 20,
             zoomControl: false, // 禁用默认控件，方便后续自定义 Memphis 风格控件
             attributionControl: false
         });
@@ -63,8 +65,14 @@ const GCMapInternal = forwardRef<GCMapRef, GCMapProps>(({
         getMapInstance: () => mapInstance
     }));
 
+    const contextValue = useMemo(() => ({
+        map: mapInstance,
+        data,
+        clusterOptions
+    }), [mapInstance, data, clusterOptions]);
+
     return (
-        <MapContext.Provider value={{ map: mapInstance, data, clusterOptions }}>
+        <MapContext.Provider value={contextValue}>
             <div ref={mapContainerRef} className={`w-full h-full relative z-0 ${className}`}>
                 {mapInstance && children}
             </div>

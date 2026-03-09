@@ -18,7 +18,7 @@ export const useAppController = () => {
   const { 
       settings, setCaches, showToast, setLoading, 
       setDrawerOpen, initSettings, loadUserPins, loadGpxList,
-      addTempPin
+      addTempPin, setToast
   } = useMapStore();
   const { setLang } = useLanguageStore();
   const { offlineMeta, status: syncStatus } = useSyncStore();
@@ -179,7 +179,7 @@ export const useAppController = () => {
 
   const performFetch = async (type: string) => {
     setLoading(true);
-    showToast('Updating map data...');
+    setToast('Updating map data...');
     try {
       const data = type === 'all' 
           ? await cacheService.syncAllData() 
