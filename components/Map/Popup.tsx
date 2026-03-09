@@ -3,6 +3,7 @@ import React from 'react';
 import { Geocache } from '../../types';
 import { CONFIG } from '../../constants';
 import { IconShare } from '../Icons';
+import { openAppScheme } from '../../utils/geo';
 
 interface PopupProps {
   cache: Geocache;
@@ -17,6 +18,24 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
   // Format dates to YYYY-MM-DD
   const placedDate = cache.placedDate ? cache.placedDate.split(' ')[0] : '-';
   const foundDate = cache.lastFoundDate ? cache.lastFoundDate.split(' ')[0] : '-';
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `https://www.geocaching.com/geocache/${cache.code}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        // Optional: show a toast or some feedback
+      });
+    }
+  };
+
+  const handleOpenApp = (app: 'amap' | 'baidu') => (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Use the original WGS84 coordinates (lat, lng) for conversion
+    openAppScheme(lat, lng, cache.name, cache.code, app);
+  };
 
   return (
     // Outer Container: Needs extra padding at bottom/right for the hard shadow to not get clipped by Leaflet's overflow handling if any
@@ -39,8 +58,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
                 {/* Share Button (Resized to be smaller) */}
                 <button 
                   className="w-5 h-5 flex items-center justify-center bg-white/20 rounded hover:bg-white/40 text-white transition-colors js-map-action active:scale-95"
-                  data-action="share-cache"
-                  data-code={cache.code}
+                  onClick={handleShare}
                   title="Copy Link"
                 >
                    <div className="pointer-events-none transform scale-90">
@@ -63,7 +81,11 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
 
             {/* Owner */}
             <div className="text-xs font-bold text-slate-500 mb-4 flex items-center gap-1">
-                By <span className="text-black bg-slate-100 px-1 border border-black">{cache.ownerUsername}</span>
+                By <span className="text-black bg-slate-100 px-1 border border-black">
+                <a href={`https://www.geocaching.com/p/?u=${cache.ownerUsername}`} target="_blank" rel="noreferer">
+                {cache.ownerUsername}
+                </a>
+                </span>
             </div>
 
             {/* Stats Boxes (Memphis Style) */}
@@ -94,27 +116,13 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             <div className="grid grid-cols-2 gap-3">
               <button 
                 className="py-2 bg-memphis-blue text-white rounded border-2 border-black font-black text-xs uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-sky-400 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
-                data-action="open-app"
-                data-app="amap"
-                data-withmap-lat={lat}
-                data-withmap-lng={lng}
-                data-lat={cache.latitude}
-                data-lng={cache.longitude}
-                data-name={cache.name}
-                data-code={cache.code}
+                onClick={handleOpenApp('amap')}
               >
                 高德 Amap
               </button>
               <button 
                 className="py-2 bg-indigo-600 text-white rounded border-2 border-black font-black text-xs uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-indigo-700 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
-                data-action="open-app"
-                data-app="baidu"
-                data-withmap-lat={lat}
-                data-withmap-lng={lng}
-                data-lat={cache.latitude}
-                data-lng={cache.longitude}
-                data-name={cache.name}
-                data-code={cache.code}
+                onClick={handleOpenApp('baidu')}
               >
                 百度 Baidu
               </button>
