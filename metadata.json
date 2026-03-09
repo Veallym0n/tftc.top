@@ -1,0 +1,7 @@
+{
+  "name": "GeoMapCN-Component",
+  "description": "A modern Geocaching tool for China with coordinate conversion, map clustering, and data visualization.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

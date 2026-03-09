@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>GeoMapCN</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              cream: '#FFFDF5',
+              memphis: {
+                dark: '#1E293B', // Slate 800
+                pink: '#FF90E8',
+                yellow: '#FFC900',
+                blue: '#23C4ED',
+                green: '#4ECDC4',
+                purple: '#8C52FF',
+              }
+            },
+            borderWidth: {
+              '3': '3px',
+            },
+            boxShadow: {
+              'memphis': '4px 4px 0px 0px rgba(0,0,0,0.45)', // Softened hard shadow
+              'memphis-sm': '2px 2px 0px 0px rgba(0,0,0,0.45)',
+              'memphis-lg': '8px 8px 0px 0px rgba(0,0,0,0.45)',
+            },
+            translate: {
+              'box': '4px',
+            },
+            zIndex: {
+              'float': '1000',
+              'drawer': '1002',
+              'overlay': '1001'
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    
+    <!-- Leaflet JS (Global) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #FFFDF5; 
+            
+            /* --- Mobile Touch Fixes --- */
+            -webkit-tap-highlight-color: transparent; /* Remove blue tap box */
+            -webkit-touch-callout: none; /* Disable iOS Magnifying Glass/Context Menu */
+            -webkit-user-select: none; /* Chrome/Safari/Opera */
+            -khtml-user-select: none; /* Konqueror */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version */
+        }
+        
+        /* Re-enable selection for inputs */
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-touch-callout: default;
+        }
+        
+        /* Custom Cluster Icon */
+        .cluster-custom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        /* User Location Pulse */
+        .user-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Marker Drop Animation */
+        @keyframes markerDrop {
+            0% { transform: translateY(-50px) scale(0.5); opacity: 0; }
+            60% { transform: translateY(10px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .marker-drop {
+            animation: markerDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* --- Leaflet Popup Overrides for Memphis Design --- */
+        
+        /* 1. Make the wrapper transparent and remove default shadow so our inner div controls the border/shadow */
+        .leaflet-popup-content-wrapper { 
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        /* 2. Reset content margins */
+        .leaflet-popup-content { 
+            margin: 0 !important; 
+            width: auto !important; 
+            line-height: 1.5;
+        }
+
+        /* 3. Hide the little triangle tip to keep the blocky look */
+        .leaflet-popup-tip-container {
+            display: none; 
+        }
+        
+        /* 4. Hide default close button */
+        .leaflet-container a.leaflet-popup-close-button {
+            display: none !important;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "h3-js": "https://esm.sh/h3-js@4.1.0",
+    "zustand": "https://esm.sh/zustand@5.0.0",
+    "use-long-press": "https://esm.sh/use-long-press@3.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.475.0",
+    "idb": "https://esm.sh/idb@8.0.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-cream text-slate-800">
+    <div id="root"></div>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGDRSCWLLH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-KGDRSCWLLH');
+    </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
