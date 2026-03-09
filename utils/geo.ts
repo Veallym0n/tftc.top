@@ -68,17 +68,17 @@ export function openAppScheme(lat: number, lon: number, name: string, code: stri
   const n = encodeURIComponent(name);
   const c = encodeURIComponent(code);
   
-  // Detect Mobile
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isMobile = isAndroid || isIOS || /webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   if (app === 'amap') {
-    // Input is WGS84, convert to GCJ02
-    const [gLat, gLon] = wgs2gcj(lat, lon);
-
     if (isMobile) {
-      window.location.href = `iosamap://viewMap?sourceApplication=TFTCTop&backScheme=TFTCTop&poiname=${n}&poiid=${c}&lat=${lat}&lon=${lon}&dev=1&style=3`;
+      const scheme = isAndroid ? 'androidamap' : 'iosamap';
+      window.location.href = `${scheme}://viewMap?sourceApplication=TFTCTop&poiname=${n}&poiid=${c}&lat=${lat}&lon=${lon}&dev=1&style=3`;
     } else {
       // PC: Web URL (uses GCJ02)
+      const [gLat, gLon] = wgs2gcj(lat, lon);
       window.open(`https://uri.amap.com/marker?position=${gLon},${gLat}&name=${n}&callnative=1`);
     }
   } else if (app === 'baidu') {

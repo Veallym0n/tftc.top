@@ -16,7 +16,7 @@ const GlobalOverlays: React.FC = () => {
         }`}
       >
         {loading && (
-          <div className="w-4 h-4 border-2 border-white/30 border-t-memphis-yellow rounded-full animate-spin"></div>
+          <div className="w-4 h-4 shrink-0 border-2 border-white/30 border-t-memphis-yellow rounded-full animate-spin"></div>
         )}
         <span className="font-bold">{displayMsg}</span>
       </div>
