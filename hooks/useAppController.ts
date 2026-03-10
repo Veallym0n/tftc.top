@@ -204,7 +204,20 @@ export const useAppController = () => {
   const handleSyncConfirm = async (shouldUpdate: boolean) => {
       if (shouldUpdate) {
           performFetch('all');
-      } 
+      } else {
+          // Load from local cache without network
+          setDrawerOpen(false);
+          setLoading(true);
+          try {
+              const cached = await dbService.getOfflineCaches();
+              setCaches(cached);
+              showToast(`Loaded ${cached.length} cached items`);
+          } catch (err: any) {
+              showToast('Error loading cache: ' + (err.message || err));
+          } finally {
+              setLoading(false);
+          }
+      }
   };
 
   const fetchData = async (type: string) => {
