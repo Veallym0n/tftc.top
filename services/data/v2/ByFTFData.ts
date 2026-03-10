@@ -1,5 +1,5 @@
 import { IDataSource } from '../DataSource';
-import { Geocache } from '../../types';
+import { Geocache } from '@/types';
 import { dbService } from '../../db';
 
 export class ByFTFData implements IDataSource {

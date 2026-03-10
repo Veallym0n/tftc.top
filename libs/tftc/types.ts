@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface GCData {
     id: string;
     latitude: number;
@@ -18,6 +20,6 @@ export interface GCMapProps {
     zoom?: number;
     clusterOptions?: ClusterOptions;
     className?: string;
-    children?: React.ReactNode;
+    children?: ReactNode;
     onMapReady?: (map: any) => void;
 }
