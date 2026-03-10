@@ -29,7 +29,7 @@ const SyncConfirmModal = NiceModal.create(({ onConfirm }: SyncConfirmModalProps)
                 onClick={() => handleConfirm(false)} 
                 className="flex-1 px-4 py-2 border-2 border-black text-slate-700 font-bold rounded-xl hover:bg-slate-50 shadow-memphis-sm transition-all active:shadow-none active:translate-y-0.5"
               >
-                Cancel
+                Use Cache
               </button>
               <button 
                 onClick={() => handleConfirm(true)} 
@@ -45,7 +45,7 @@ const SyncConfirmModal = NiceModal.create(({ onConfirm }: SyncConfirmModalProps)
                 You have <strong className="text-black bg-memphis-yellow px-1 border border-black rounded">{offlineMeta.count.toLocaleString()}</strong> caches saved offline from <strong>{offlineMeta.lastSync}</strong>.
             </p>
             <p className="text-sm text-slate-500">
-                Do you want to re-download the database? This will overwrite your existing local data.
+                Update to re-download fresh data from the server, or use your existing cached data.
             </p>
         </div>
     </Modal>
