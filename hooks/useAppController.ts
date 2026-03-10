@@ -177,6 +177,20 @@ export const useAppController = () => {
 
   // --- Logic Functions ---
 
+  const loadFromCache = async () => {
+      setDrawerOpen(false);
+      setLoading(true);
+      try {
+          const cached = await dbService.getOfflineCaches();
+          setCaches(cached);
+          showToast(`Loaded ${cached.length} cached items`);
+      } catch (err: any) {
+          showToast('Error loading cache: ' + (err.message || err));
+      } finally {
+          setLoading(false);
+      }
+  };
+
   const performFetch = async (type: string) => {
     setLoading(true);
     setToast('Updating map data...');
@@ -205,18 +219,7 @@ export const useAppController = () => {
       if (shouldUpdate) {
           performFetch('all');
       } else {
-          // Load from local cache without network
-          setDrawerOpen(false);
-          setLoading(true);
-          try {
-              const cached = await dbService.getOfflineCaches();
-              setCaches(cached);
-              showToast(`Loaded ${cached.length} cached items`);
-          } catch (err: any) {
-              showToast('Error loading cache: ' + (err.message || err));
-          } finally {
-              setLoading(false);
-          }
+          loadFromCache();
       }
   };
 
