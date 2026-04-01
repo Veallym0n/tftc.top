@@ -79,7 +79,7 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
   // 2. Map Events
   const handleMapReady = useCallback((map: any) => {
     setMapInstance(map);
-    map.on('movestart', () => onMapMoveStart && onMapMoveStart());
+    map.on('dragstart', () => onMapMoveStart && onMapMoveStart());
     map.on('moveend', () => {
       const center = map.getCenter();
       onMapMoveEnd(center.lat, center.lng, map.getZoom());

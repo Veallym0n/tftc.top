@@ -9,6 +9,7 @@ interface MapControlsProps {
   onSetMapType: (type: MapType) => void;
   onOpenDrawer: () => void;
   isLocating: boolean;
+  isFollowing: boolean;
   onToggleLocate: () => void;
   showLayerMenu: boolean;
   setShowLayerMenu: (show: boolean) => void;
@@ -24,6 +25,7 @@ const MapControls: React.FC<MapControlsProps> = ({
   onSetMapType,
   onOpenDrawer,
   isLocating,
+  isFollowing,
   onToggleLocate,
   showLayerMenu,
   setShowLayerMenu,
@@ -75,7 +77,7 @@ const MapControls: React.FC<MapControlsProps> = ({
       {/* Location Button */}
       <button 
         onClick={onToggleLocate} 
-        className={`w-10 h-10 border-2 border-memphis-dark rounded-xl shadow-memphis flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-memphis-lg active:translate-y-0.5 active:translate-x-0.5 active:shadow-memphis-sm ${isLocating ? 'bg-memphis-blue text-white' : 'bg-white text-slate-700'}`}
+        className={`w-10 h-10 border-2 border-memphis-dark rounded-xl shadow-memphis flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-memphis-lg active:translate-y-0.5 active:translate-x-0.5 active:shadow-memphis-sm ${isLocating ? (isFollowing ? 'bg-memphis-blue text-white' : 'bg-sky-200 text-memphis-blue') : 'bg-white text-slate-700'}`}
         aria-label="Locate Me"
       >
         <IconLocate />

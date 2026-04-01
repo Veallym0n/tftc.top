@@ -17,6 +17,7 @@ interface MapState {
   loading: boolean;
   toastMsg: string | null;
   isLocating: boolean;
+  isFollowing: boolean;
 
   // --- Settings ---
   settings: {
@@ -35,6 +36,7 @@ interface MapState {
   setToast: (msg: string | null) => void;
   showToast: (msg: string) => void; // Helper with timeout
   setIsLocating: (isLocating: boolean) => void;
+  setIsFollowing: (isFollowing: boolean) => void;
   
   // Settings Actions
   initSettings: () => Promise<void>;
@@ -63,6 +65,7 @@ export const useMapStore = create<MapState>((set, get) => ({
   loading: false,
   toastMsg: null,
   isLocating: false,
+  isFollowing: true,
   settings: {
     showCircles: false,
     customPinsEnabled: false,
@@ -89,7 +92,8 @@ export const useMapStore = create<MapState>((set, get) => ({
       clearTimeout((window as any)._toastTimeout);
     }
   },
-  setIsLocating: (isLocating) => set({ isLocating }),
+  setIsLocating: (isLocating) => set({ isLocating, isFollowing: isLocating }),
+  setIsFollowing: (isFollowing) => set({ isFollowing }),
 
   showToast: (msg) => {
     set({ toastMsg: msg });

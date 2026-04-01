@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const { 
       caches, userPins, gpxFiles, mapType, settings, 
       drawerOpen, setDrawerOpen, showLayerMenu, setShowLayerMenu,
-      isLocating, setIsLocating, setMapType,
+      isLocating, isFollowing, setIsLocating, setIsFollowing, setMapType,
       addUserPin, deleteUserPin, updateUserPin, toggleSetting, setExploreRadius,
       deleteGpx, setCaches, loadGpxList
   } = useMapStore();
@@ -36,9 +36,24 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'data' | 'tools' | 'settings' | 'links' | 'about'>('data');
 
   // 4. Map Event Handlers (UI -> Service)
-  const handleMapMoveStart = () => eventService.emit('MAP_DRAG_START', undefined);
+  const handleMapMoveStart = () => {
+      eventService.emit('MAP_DRAG_START', undefined);
+      if (isFollowing) {
+          setIsFollowing(false);
+      }
+  };
   const handleMapMoveEnd = (lat: number, lng: number, zoom: number) => {
       eventService.debounceEmit('MAP_IDLE', { lat, lng, zoom }, 400);
+  };
+
+  const handleToggleLocate = () => {
+      if (!isLocating) {
+          setIsLocating(true);
+      } else if (!isFollowing) {
+          setIsFollowing(true);
+      } else {
+          setIsLocating(false);
+      }
   };
 
   const handleOpenCacheManager = () => {
@@ -74,7 +89,8 @@ const App: React.FC = () => {
         onSetMapType={setMapType}
         onOpenDrawer={() => setDrawerOpen(true)}
         isLocating={isLocating}
-        onToggleLocate={() => setIsLocating(!isLocating)}
+        isFollowing={isFollowing}
+        onToggleLocate={handleToggleLocate}
         showLayerMenu={showLayerMenu}
         setShowLayerMenu={setShowLayerMenu}
         showExplore={offlineMeta.count > 0 || isSyncing}

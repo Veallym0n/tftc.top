@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { GCData } from './GCData';
+import { useMapStore } from '../../../stores/useMapStore';
 
 interface UserLocationProps {
     isLocating: boolean;
@@ -22,6 +23,21 @@ export const UserLocation: React.FC<UserLocationProps> = ({
     iconAnchor = [20, 20]
 }) => {
     const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
+    const { isFollowing } = useMapStore();
+    const isFollowingRef = useRef(isFollowing);
+    const rawLocationRef = useRef<{ lat: number, lng: number } | null>(null);
+    const onLocationFoundRef = useRef(onLocationFound);
+
+    useEffect(() => {
+        onLocationFoundRef.current = onLocationFound;
+    }, [onLocationFound]);
+
+    useEffect(() => {
+        isFollowingRef.current = isFollowing;
+        if (isFollowing && rawLocationRef.current && onLocationFoundRef.current) {
+            onLocationFoundRef.current(rawLocationRef.current.lat, rawLocationRef.current.lng);
+        }
+    }, [isFollowing]);
 
     useEffect(() => {
         let watchId: number | null = null;
@@ -32,9 +48,10 @@ export const UserLocation: React.FC<UserLocationProps> = ({
             }
             watchId = navigator.geolocation.watchPosition((pos) => {
                 let { latitude, longitude } = pos.coords;
+                rawLocationRef.current = { lat: latitude, lng: longitude };
                 
-                if (onLocationFound) {
-                    onLocationFound(latitude, longitude);
+                if (onLocationFoundRef.current && isFollowingRef.current) {
+                    onLocationFoundRef.current(latitude, longitude);
                 }
 
                 if (transformCoords) {
@@ -49,7 +66,7 @@ export const UserLocation: React.FC<UserLocationProps> = ({
         return () => {
             if (watchId !== null) navigator.geolocation.clearWatch(watchId);
         };
-    }, [isLocating, onLocationFound, transformCoords]);
+    }, [isLocating, transformCoords]);
 
     if (!userLocation) return null;
 
