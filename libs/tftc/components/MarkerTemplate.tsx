@@ -83,7 +83,7 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
             const marker = L.marker([item.latitude, item.longitude], { icon: customIcon });
 
             // 绘制冲突圈
-            if (conflictRadius && conflictRadius > 0) {
+            if (conflictRadius && conflictRadius > 0 && item.geocacheType === 2) {
                 const circle = L.circle([item.latitude, item.longitude], {
                     radius: conflictRadius,
                     stroke: true,
