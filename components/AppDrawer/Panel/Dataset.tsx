@@ -102,7 +102,7 @@ export const Dataset: React.FC<DatasetProps> = ({
         { label: t('data.disc.history'), desc: t('data.disc.history.desc'), icon: '📅', color: 'bg-memphis-yellow text-slate-900', onClick: () => onFetchData('by_today') },
       ]} />
       <DataGroup title={t('data.spec.title')} items={[
-        { label: t('data.spec.events'), desc: t('data.spec.events.desc'), icon: '🎪', color: 'bg-memphis-pink text-white', onClick: () => onFetchData('by_event') },
+        { label: t('data.spec.events'), desc: t('data.spec.events.desc'), icon: '🎪', color: 'bg-memphis-pink text-white', onClick: () => onFetchData('by_current_event') },
         { label: t('data.spec.ftf'), desc: t('data.spec.ftf.desc'), icon: '👑', color: 'bg-memphis-purple text-white', onClick: () => onFetchData('by_ftf') },
       ]} />
       <DataGroup title={t('data.heavy.title')} items={[

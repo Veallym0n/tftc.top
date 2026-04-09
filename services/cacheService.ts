@@ -15,7 +15,8 @@ import { CONFIG } from '../constants';
 import { ByFoundData } from './data/v2/ByFoundData';
 import { ByFTFData } from './data/v2/ByFTFData';
 import { ByTodayData } from './data/v2/ByTodayData';
-import { ByEventData } from './data/v2/ByEventData';
+import { ByCurrentEventData } from './data/v2/ByCurrentEventData';
+import { ByAllEventData } from './data/v2/ByAllEventData';
 
 const STORAGE_KEY_LAST_DL = 'last_daily_sync';
 const H3_RESOLUTION = 9;
@@ -26,7 +27,8 @@ class CacheService {
   constructor() {
     this.register(new ByPublishedData());
     this.register(new ByFoundData());
-    this.register(new ByEventData());
+    this.register(new ByCurrentEventData());
+    this.register(new ByAllEventData());
     this.register(new ByTodayData());
     this.register(new ByFTFData());
   }

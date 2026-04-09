@@ -2,7 +2,7 @@ import { IDataSource } from '../DataSource';
 import { Geocache } from '@/types';
 import { dbService } from '../../db';
 
-export class ByEventData implements IDataSource {
+export class ByAllEventData implements IDataSource {
   readonly id = 'by_event';
 
   async fetch(): Promise<Geocache[]> {
