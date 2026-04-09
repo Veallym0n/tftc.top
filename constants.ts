@@ -2,7 +2,7 @@
 import { AppConfig, MapLayerConfig, MapType } from './types';
 
 export const CONFIG: AppConfig = {
-  version: '1.1.13',
+  version: '1.1.14',
   apiBase: 'https://tftc.top/apiv2',
   endpoints: {
     by_published: 'by-published',
