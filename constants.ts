@@ -2,7 +2,7 @@
 import { AppConfig, MapLayerConfig, MapType } from './types';
 
 export const CONFIG: AppConfig = {
-  version: '1.1.14',
+  version: '1.2.0',
   apiBase: 'https://tftc.top/apiv2',
   endpoints: {
     by_published: 'by-published',
@@ -53,6 +53,7 @@ export const MAP_LAYERS: Record<MapType, MapLayerConfig> = {
     name: '高德 (Amap)',
     url: 'https://wprd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=10&x={x}&y={y}&z={z}',
     subdomains: ['1', '2', '3', '4'],
+    maxZoom: 18,
     std: 'gcj02'
   },
   tencent: {

@@ -40,6 +40,7 @@ export interface MapLayerConfig {
   subdomains?: string[];
   std: 'gcj02' | 'wgs84'; // Coordinate standard
   className?: string;
+  maxZoom?: number;
 }
 
 export interface AppConfig {
@@ -64,8 +65,9 @@ export interface MapMoveEvent {
 export interface MapFlyToEvent {
   lat: number;
   lng: number;
-  code?: string; // If provided, try to open popup
-  pinId?: number; // If provided, try to open user pin popup
+  code?: string;   // If provided, try to open popup
+  pinId?: number;  // If provided, try to open user pin popup
+  zoom?: number;   // If provided, set map zoom level
 }
 
 export interface AppEventMap {

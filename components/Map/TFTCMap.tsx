@@ -92,7 +92,7 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
         [lat, lng] = wgs2gcj(lat, lng);
       }
       mapRef.current?.panTo(lat, lng);
-      mapRef.current?.setZoom(16);
+      mapRef.current?.setZoom(evt.zoom ?? 16);
     };
     eventService.on('MAP_FLY_TO', handleFlyTo);
   }, [isGCJ, onMapMoveStart, onMapMoveEnd]);
@@ -187,7 +187,7 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
         name={layerConfig.name} 
         url={layerConfig.url} 
         isDefault 
-        maxZoom={18}
+        maxZoom={layerConfig.maxZoom ?? 18}
         subdomains={layerConfig.subdomains}
       />
 
