@@ -19,6 +19,8 @@ const en: Dictionary = {
     'tools.smart.desc': 'Convert coordinates & Launch Maps',
     'tools.search.title': 'Search Cache',
     'tools.search.desc': 'Find offline cache by GC Code',
+    'tools.filter.title': 'Offline Filter Lab',
+    'tools.filter.desc': 'Build advanced rules from local offline caches',
     
     // Smart Tool
     'smart.title': 'Smart Coordinates',
@@ -93,6 +95,8 @@ const zh: Dictionary = {
     'tools.smart.desc': '坐标格式转换 & 启动地图 App',
     'tools.search.title': '搜索藏点',
     'tools.search.desc': '通过 GC 码搜索离线数据库',
+    'tools.filter.title': '离线过滤工作台',
+    'tools.filter.desc': '对本地离线缓存构建高级过滤规则',
 
     // Smart Tool
     'smart.title': '智能坐标转换',
