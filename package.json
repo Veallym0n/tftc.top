@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
+    "@fn-sphere/filter": "^1.3.0",
     "h3-js": "4.1.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "use-long-press": "3.2.0",
+    "zod": "^4.3.6",
     "zustand": "5.0.0"
   },
   "devDependencies": {
