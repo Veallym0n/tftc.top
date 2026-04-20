@@ -4,6 +4,8 @@ import NiceModal from '@ebay/nice-modal-react';
 import SmartCoords from '../Tools/SmartCoords';
 import Compass from '../Tools/Compass';
 import CacheFilter from '../Tools/CacheFilter';
+import LocalOfflineFilterModal from '../../../features/filterSphere/LocalOfflineFilterModal';
+
 const Tools: React.FC = () => {
   return (
     <div className="animate-fade-in space-y-4">
@@ -21,6 +23,19 @@ const Tools: React.FC = () => {
           <div>
             <div className="font-bold text-slate-800 text-sm group-hover:text-memphis-purple transition-colors">智能坐标</div>
             <div className="text-xs text-slate-500 font-medium">解析、转换与导航坐标</div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => NiceModal.show(LocalOfflineFilterModal)}
+          className="w-full flex items-center p-3 bg-white rounded-xl border-2 border-memphis-dark shadow-none hover:shadow-memphis hover:-translate-y-0.5 transition-all text-left group active:translate-y-0.5 active:shadow-none"
+        >
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl mr-4 shrink-0 bg-memphis-yellow text-slate-900 border-2 border-memphis-dark transform -rotate-2 group-hover:rotate-0 transition-transform">
+            🧪
+          </div>
+          <div>
+            <div className="font-bold text-slate-800 text-sm group-hover:text-yellow-700 transition-colors">筛选实验室</div>
+            <div className="text-xs text-slate-500 font-medium">离线缓存规则筛选</div>
           </div>
         </button>
 
