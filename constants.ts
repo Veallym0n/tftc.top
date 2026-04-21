@@ -15,6 +15,7 @@ export const CONFIG: AppConfig = {
   links: [
     { name: '2026年徽章活动列表', url: './souvenirs/2026.html', icon: '🎖️' },
     { name: 'Geocaching 官方', url: 'https://www.geocaching.com', icon: '🌐' },
+    { name: 'Geodataing 数据统计', url: 'https://geodataing.vercel.app', icon: '📊' },
     { name: 'NanoApe 的新人入门站', url: 'https://geoguide.top', icon: '🏆' },
     { name: 'Geocaching CN', url: 'https://www.geocaching.cn', icon: '🇨🇳' }
   ],
