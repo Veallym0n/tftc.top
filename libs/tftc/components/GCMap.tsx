@@ -7,6 +7,7 @@ import { getConstants } from '../constants';
 export interface GCMapRef {
     panTo: (lat: number, lng: number) => void;
     setZoom: (level: number) => void;
+    setView: (lat: number, lng: number, zoom: number) => void;
     getMapInstance: () => any;
 }
 
@@ -61,6 +62,9 @@ const GCMapInternal = forwardRef<GCMapRef, GCMapProps>(({
         },
         setZoom: (level: number) => {
             if (mapInstance) mapInstance.setZoom(level);
+        },
+        setView: (lat: number, lng: number, zoom: number) => {
+            if (mapInstance) mapInstance.setView([lat, lng], zoom);
         },
         getMapInstance: () => mapInstance
     }));

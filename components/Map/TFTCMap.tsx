@@ -84,18 +84,20 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
       const center = map.getCenter();
       onMapMoveEnd(center.lat, center.lng, map.getZoom());
     });
+  }, [onMapMoveStart, onMapMoveEnd]);
 
-    // FlyTo Event
+  // 3. FlyTo Event — independent effect so isGCJ is always current
+  useEffect(() => {
     const handleFlyTo = (evt: MapFlyToEvent) => {
       let { lat, lng } = evt;
       if (isGCJ) {
         [lat, lng] = wgs2gcj(lat, lng);
       }
-      mapRef.current?.panTo(lat, lng);
-      mapRef.current?.setZoom(evt.zoom ?? 16);
+      mapRef.current?.setView(lat, lng, evt.zoom ?? 16);
     };
     eventService.on('MAP_FLY_TO', handleFlyTo);
-  }, [isGCJ, onMapMoveStart, onMapMoveEnd]);
+    return () => eventService.off('MAP_FLY_TO', handleFlyTo);
+  }, [isGCJ]);
 
   const renderIcon = useCallback((cache: IGCData) => {
     const iconUrl = ICON_URL_TEMPLATE.replace('{n}', String(cache.geocacheType));

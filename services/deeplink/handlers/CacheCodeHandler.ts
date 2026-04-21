@@ -1,9 +1,12 @@
 import { IDeepLinkHandler, DeepLinkContext } from '../types';
 import { cacheService } from '../../cacheService';
+import { Geocache } from '../../../types';
 
 /**
- * Handles ?code=GCxxxxx deep links.
- * Loads a single cache by code and flies to it.
+ * Handles ?code=GCxxxxx[,GCyyyyy,...] deep links.
+ * Supports one or multiple comma-separated cache codes.
+ * Loads all found caches, adds them to the map,
+ * and flies to their geographic centroid.
  */
 export class CacheCodeHandler implements IDeepLinkHandler {
   readonly id = 'cache_code';
@@ -13,23 +16,49 @@ export class CacheCodeHandler implements IDeepLinkHandler {
   }
 
   async execute(params: URLSearchParams, ctx: DeepLinkContext): Promise<void> {
-    const code = params.get('code')!;
+    const codes = params.get('code')!
+      .split(',')
+      .map(c => c.trim())
+      .filter(Boolean);
+
     ctx.setLoading(true);
 
     try {
-      const cache = await cacheService.getCacheDetail(code);
-      if (cache) {
-        ctx.setCaches(prev => {
-          if (prev.some(c => c.code === cache.code)) return prev;
-          return [...prev, cache];
-        });
-        setTimeout(() => {
-          ctx.flyTo(cache.latitude, cache.longitude, { code: cache.code });
-          ctx.showToast(`Loaded cache ${cache.code}`);
-        }, 1000);
-      } else {
-        ctx.showToast(`Cache ${code} not found.`);
+      // Fetch all codes in parallel
+      const results = await Promise.all(
+        codes.map(code => cacheService.getCacheDetail(code).catch(() => null))
+      );
+
+      const found: Geocache[] = results.filter((c): c is Geocache => c !== null);
+      const notFound = codes.filter((_, i) => results[i] === null);
+
+      if (found.length === 0) {
+        ctx.showToast(`Cache${codes.length > 1 ? 's' : ''} not found.`);
+        return;
       }
+
+      // Add all found caches to the map (skip duplicates)
+      ctx.setCaches(prev => {
+        const existingCodes = new Set(prev.map(c => c.code));
+        const newCaches = found.filter(c => !existingCodes.has(c.code));
+        return newCaches.length === 0 ? prev : [...prev, ...newCaches];
+      });
+
+      // Fly to geographic centroid of all found caches
+      const centerLat = found.reduce((s, c) => s + c.latitude, 0) / found.length;
+      const centerLng = found.reduce((s, c) => s + c.longitude, 0) / found.length;
+
+      // Pick a zoom level: single cache → 16, multiple → slightly wider
+      const zoom = found.length === 1 ? 16 : 13;
+      const singleCode = found.length === 1 ? found[0].code : undefined;
+
+      setTimeout(() => {
+        ctx.flyTo(centerLat, centerLng, { zoom, code: singleCode });
+        const msg = notFound.length > 0
+          ? `Loaded ${found.length} cache(s). Not found: ${notFound.join(', ')}`
+          : `Loaded ${found.length} cache(s)`;
+        ctx.showToast(msg);
+      }, 1000);
     } finally {
       ctx.setLoading(false);
     }
