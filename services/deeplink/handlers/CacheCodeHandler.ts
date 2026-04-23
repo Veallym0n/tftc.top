@@ -1,5 +1,6 @@
 import { IDeepLinkHandler, DeepLinkContext } from '../types';
 import { cacheService } from '../../cacheService';
+import { zoomForCaches, centroidOfCaches } from '../geoUtils';
 import { Geocache } from '../../../types';
 
 /**
@@ -44,16 +45,13 @@ export class CacheCodeHandler implements IDeepLinkHandler {
         return newCaches.length === 0 ? prev : [...prev, ...newCaches];
       });
 
-      // Fly to geographic centroid of all found caches
-      const centerLat = found.reduce((s, c) => s + c.latitude, 0) / found.length;
-      const centerLng = found.reduce((s, c) => s + c.longitude, 0) / found.length;
-
-      // Pick a zoom level: single cache → 16, multiple → slightly wider
-      const zoom = found.length === 1 ? 16 : 13;
+      // Fly to geographic centroid, zoom auto-derived from point spread
+      const center = centroidOfCaches(found);
+      const zoom = zoomForCaches(found);
       const singleCode = found.length === 1 ? found[0].code : undefined;
 
       setTimeout(() => {
-        ctx.flyTo(centerLat, centerLng, { zoom, code: singleCode });
+        ctx.flyTo(center.lat, center.lng, { zoom, code: singleCode });
         const msg = notFound.length > 0
           ? `Loaded ${found.length} cache(s). Not found: ${notFound.join(', ')}`
           : `Loaded ${found.length} cache(s)`;
