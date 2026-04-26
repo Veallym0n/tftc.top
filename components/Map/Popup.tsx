@@ -22,7 +22,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
   const handleShare = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const url = `https://www.geocaching.com/geocache/${cache.code}`;
+    const url = `https://coord.info/${cache.code}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         // Optional: show a toast or some feedback
