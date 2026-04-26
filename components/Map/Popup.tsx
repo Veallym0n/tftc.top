@@ -71,7 +71,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
           <div className="p-4 bg-white">
             {/* Title */}
             <a 
-              href={`https://www.geocaching.com/geocache/${cache.code}`} 
+              href={`https://coord.info/${cache.code}`} 
               target="_blank" 
               rel="noreferrer" 
               className="block text-lg font-black text-slate-900 leading-tight mb-2 hover:underline decoration-2 underline-offset-2"
