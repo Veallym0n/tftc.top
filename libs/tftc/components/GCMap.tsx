@@ -42,6 +42,7 @@ const GCMapInternal = forwardRef<GCMapRef, GCMapProps>(({
             zoom: initialZoom,
             minZoom: 4,
             maxZoom: 20,
+            preferCanvas: true, // 性能优化，尤其是大量数据时
             zoomControl: false, // 禁用默认控件，方便后续自定义 Memphis 风格控件
             attributionControl: false
         });
