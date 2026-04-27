@@ -65,7 +65,7 @@ const AppDrawer: React.FC<AppDrawerProps> = ({
       />
 
       {/* Drawer Container */}
-      <div className={`fixed bottom-0 left-0 right-0 bg-cream rounded-t-3xl border-t-2 border-x-2 border-memphis-dark shadow-[0_-8px_0px_rgba(0,0,0,0.1)] h-[60vh] flex flex-col transition-transform duration-300 cubic-bezier(0.32, 0.72, 0, 1) z-drawer ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+      <div className={`fixed bottom-0 left-0 right-0 bg-cream rounded-t-3xl border-t-2 border-x-2 border-memphis-dark h-[60vh] flex flex-col transition-transform duration-300 cubic-bezier(0.32, 0.72, 0, 1) z-drawer ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
 
         {/* 1. Header (Fixed Top) */}
         <div className="flex justify-between items-center px-6 py-4 bg-white rounded-t-3xl border-b-2 border-memphis-dark shrink-0">
