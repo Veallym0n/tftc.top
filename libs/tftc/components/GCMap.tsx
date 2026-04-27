@@ -16,6 +16,7 @@ const GCMapInternal = forwardRef<GCMapRef, GCMapProps>(({
     center,
     zoom,
     clusterOptions,
+    clusterEnabled = true,
     className = '',
     children,
     onMapReady
@@ -73,8 +74,9 @@ const GCMapInternal = forwardRef<GCMapRef, GCMapProps>(({
     const contextValue = useMemo(() => ({
         map: mapInstance,
         data,
-        clusterOptions
-    }), [mapInstance, data, clusterOptions]);
+        clusterOptions,
+        clusterEnabled
+    }), [mapInstance, data, clusterOptions, clusterEnabled]);
 
     return (
         <MapContext.Provider value={contextValue}>

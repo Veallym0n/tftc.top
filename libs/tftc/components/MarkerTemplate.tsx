@@ -25,7 +25,7 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
     iconAnchor = [18, 18],
     popupAnchor = [0, -18]
 }) => {
-    const { map, data, clusterOptions } = useMapContext();
+    const { map, data, clusterOptions, clusterEnabled = true } = useMapContext();
     const clusterGroupRef = useRef<any>(null);
     const circlesLayerRef = useRef<any>(null);
     const popupRootsRef = useRef<Map<string, Root>>(new Map());
@@ -35,11 +35,12 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
 
         // @ts-ignore
         const L = window.L;
-        if (!L || !L.markerClusterGroup) return;
+        if (!L) return;
 
-        // 1. 初始化聚合组 (单例)
-        if (!clusterGroupRef.current) {
-            clusterGroupRef.current = L.markerClusterGroup({
+        // 1. 创建 marker 容器（聚合模式 or 普通图层）
+        let markerContainer: any;
+        if (clusterEnabled && L.markerClusterGroup) {
+            markerContainer = L.markerClusterGroup({
                 maxClusterRadius: clusterOptions?.maxClusterRadius || 50,
                 disableClusteringAtZoom: clusterOptions?.disableClusteringAtZoom,
                 iconCreateFunction: clusterOptions?.iconCreateFunction,
@@ -47,19 +48,18 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
                 showCoverageOnHover: false,
                 zoomToBoundsOnClick: true
             });
-            map.addLayer(clusterGroupRef.current);
+        } else {
+            markerContainer = L.layerGroup();
         }
+        clusterGroupRef.current = markerContainer;
+        map.addLayer(markerContainer);
 
-        if (!circlesLayerRef.current) {
-            circlesLayerRef.current = L.layerGroup();
-            map.addLayer(circlesLayerRef.current);
-        }
+        const circlesLayer = L.layerGroup();
+        circlesLayerRef.current = circlesLayer;
+        map.addLayer(circlesLayer);
 
-        const clusterGroup = clusterGroupRef.current;
-        const circlesLayer = circlesLayerRef.current;
-        
-        clusterGroup.clearLayers();
-        circlesLayer.clearLayers();
+        const clusterGroup = markerContainer;
+        const circlesLayer2 = circlesLayer;
 
         // 2. 过滤属于当前 Template 的数据
         const filteredData = data.filter(item => 
@@ -96,10 +96,10 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
                 
                 // 只有当 marker 实际显示在地图上时（未被聚合），才添加冲突圈
                 marker.on('add', () => {
-                    circlesLayer.addLayer(circle);
+                    circlesLayer2.addLayer(circle);
                 });
                 marker.on('remove', () => {
-                    circlesLayer.removeLayer(circle);
+                    circlesLayer2.removeLayer(circle);
                 });
             }
 
@@ -135,16 +135,22 @@ export const MarkerTemplate: React.FC<MarkerTemplateProps> = ({
             return marker;
         });
 
-        clusterGroup.addLayers(markers);
+        if (clusterEnabled && L.markerClusterGroup) {
+            clusterGroup.addLayers(markers);
+        } else {
+            markers.forEach((m: any) => clusterGroup.addLayer(m));
+        }
 
         // 卸载清理
         return () => {
-            clusterGroup.clearLayers();
-            circlesLayer.clearLayers();
+            map.removeLayer(markerContainer);
+            map.removeLayer(circlesLayer);
+            clusterGroupRef.current = null;
+            circlesLayerRef.current = null;
             popupRootsRef.current.forEach(root => root.unmount());
             popupRootsRef.current.clear();
         };
-    }, [map, data, matchType, renderIcon, renderPopup, onMarkerClick, conflictRadius]);
+    }, [map, data, clusterEnabled, matchType, renderIcon, renderPopup, onMarkerClick, conflictRadius]);
 
     // 控制冲突圈的显示与隐藏 (只在 zoom >= 14 时显示)
     useEffect(() => {

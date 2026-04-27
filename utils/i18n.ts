@@ -56,6 +56,8 @@ const en: Dictionary = {
     'settings.customPinsEnabled.desc': 'Long press map to drop temporary pins',
     'settings.autoSync.title': 'Auto Offline Sync',
     'settings.autoSync.desc': 'Download full database daily automatically',
+    'settings.clusterEnabled.title': 'Marker Clustering',
+    'settings.clusterEnabled.desc': 'Group nearby markers into clusters',
     
     // Dataset
     'data.gpx.title': 'My GPX Files',
@@ -130,6 +132,8 @@ const zh: Dictionary = {
     'settings.customPinsEnabled.desc': '长按地图放置临时标记',
     'settings.autoSync.title': '每日自动同步数据',
     'settings.autoSync.desc': '每天自动下载全量数据库',
+    'settings.clusterEnabled.title': '标记点聚合',
+    'settings.clusterEnabled.desc': '将邻近标记点自动聚合成簇',
 
     // Dataset
     'data.gpx.title': '我的 GPX 文件',

@@ -19,6 +19,7 @@ export interface GCMapProps {
     center?: [number, number];
     zoom?: number;
     clusterOptions?: ClusterOptions;
+    clusterEnabled?: boolean;
     className?: string;
     children?: ReactNode;
     onMapReady?: (map: any) => void;

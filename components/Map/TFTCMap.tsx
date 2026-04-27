@@ -13,6 +13,7 @@ interface TFTCMapProps {
   caches: Geocache[];
   userPins: UserPin[];
   showCircles: boolean;
+  clusterEnabled?: boolean;
   onPinAdd: (lat: number, lng: number) => void;
   onPinDelete: (id: number) => void;
   onPinUpdate: (id: number, note: string) => void;
@@ -34,6 +35,7 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
   caches,
   userPins,
   showCircles,
+  clusterEnabled = true,
   onPinAdd,
   onPinDelete,
   onPinUpdate,
@@ -184,6 +186,7 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
       zoom={4}
       onMapReady={handleMapReady}
       clusterOptions={clusterOptions}
+      clusterEnabled={clusterEnabled}
     >
       <MapLayer 
         name={layerConfig.name} 

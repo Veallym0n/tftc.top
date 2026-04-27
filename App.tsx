@@ -74,6 +74,7 @@ const App: React.FC = () => {
         caches={caches}
         userPins={userPins}
         showCircles={settings.showCircles}
+        clusterEnabled={settings.clusterEnabled}
         customPinsEnabled={settings.customPinsEnabled}
         onPinAdd={addUserPin}
         onPinDelete={deleteUserPin}

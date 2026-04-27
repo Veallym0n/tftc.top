@@ -24,6 +24,7 @@ interface MapState {
     showCircles: boolean;
     customPinsEnabled: boolean;
     autoSync: boolean;
+    clusterEnabled: boolean;
     exploreRadius: number;
   };
 
@@ -40,7 +41,7 @@ interface MapState {
   
   // Settings Actions
   initSettings: () => Promise<void>;
-  toggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync', val: boolean) => void;
+  toggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync' | 'clusterEnabled', val: boolean) => void;
   setExploreRadius: (radius: number) => void;
 
   // Data Actions (Async with DB)
@@ -70,6 +71,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     showCircles: false,
     customPinsEnabled: false,
     autoSync: true,
+    clusterEnabled: true,
     exploreRadius: 3,
   },
 
@@ -106,10 +108,11 @@ export const useMapStore = create<MapState>((set, get) => ({
   // --- Settings Logic ---
   initSettings: async () => {
     try {
-        const [circles, pins, sync, radius, savedMapType] = await Promise.all([
+        const [circles, pins, sync, cluster, radius, savedMapType] = await Promise.all([
             dbService.getSetting('showCircles', false),
             dbService.getSetting('customPinsEnabled', false),
             dbService.getSetting('autoSync', true),
+            dbService.getSetting('clusterEnabled', true),
             dbService.getSetting('exploreRadius', 3),
             dbService.getSetting<MapType>('mapType', 'gaode') // Load mapType, default to gaode
         ]);
@@ -120,6 +123,7 @@ export const useMapStore = create<MapState>((set, get) => ({
                 showCircles: circles, 
                 customPinsEnabled: pins, 
                 autoSync: sync, 
+                clusterEnabled: cluster,
                 exploreRadius: radius 
             } 
         });
@@ -138,6 +142,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     // Side effects
     if (key === 'autoSync' && val) cacheService.initDailySync(true);
     if (key === 'customPinsEnabled' && val) get().showToast('Long press on map enabled');
+    if (key === 'clusterEnabled') get().showToast(val ? 'Clustering enabled' : 'Clustering disabled');
   },
 
   setExploreRadius: (val) => {

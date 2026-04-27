@@ -5,6 +5,7 @@ interface MapContextValue {
     map: any | null; // Leaflet map instance
     data: GCData[];
     clusterOptions?: ClusterOptions;
+    clusterEnabled?: boolean;
 }
 
 export const MapContext = createContext<MapContextValue>({ map: null, data: [] });
