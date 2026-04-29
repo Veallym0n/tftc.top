@@ -106,3 +106,68 @@ export function toDMM(val: number, isLat: boolean) {
 export function formatDMM(lat: number, lng: number) {
   return `${toDMM(lat, true)} ${toDMM(lng, false)}`;
 }
+
+/**
+ * Open a third-party map or Google Street View for a given GC code.
+ *
+ * Usage (browser console or any JS context):
+ *   window.openMap('gaode',        'GC1FB')  // 高德地图（网页版）
+ *   window.openMap('baidu',        'GC1FB')  // 百度地图（网页版）
+ *   window.openMap('google',       'GC1FB')  // Google Maps
+ *   window.openMap('googlestreet', 'GC1FB')  // Google Street View
+ *
+ * Lookup order:
+ *   1. Current map markers (useMapStore.caches)
+ *   2. Offline IndexedDB
+ *
+ * @param app  - One of 'baidu' | 'gaode' | 'google' | 'googlestreet'
+ * @param code - GC code, e.g. 'GC1FB'
+ */
+export async function openMap(
+  app: 'baidu' | 'gaode' | 'google' | 'googlestreet',
+  code: string,
+): Promise<void> {
+  const upperCode = code.trim().toUpperCase();
+
+  // 1. Look up from current map markers first
+  const { useMapStore } = await import('../stores/useMapStore');
+  let cache = useMapStore.getState().caches.find(c => c.code === upperCode);
+
+  // 2. Fallback to offline DB only
+  if (!cache) {
+    const { dbService } = await import('../services/db');
+    cache = await dbService.getCache(upperCode);
+  }
+
+  if (!cache) {
+    console.warn(`[openMap] Cache not found: ${upperCode}`);
+    return;
+  }
+
+  const { latitude: wgsLat, longitude: wgsLon, name } = cache;
+  const n = encodeURIComponent(name);
+  const c = encodeURIComponent(upperCode);
+
+  switch (app) {
+    case 'gaode': {
+      const [gLat, gLon] = wgs2gcj(wgsLat, wgsLon);
+      window.open(`https://uri.amap.com/marker?position=${gLon},${gLat}&name=${n}&callnative=1`);
+      break;
+    }
+    case 'baidu': {
+      const [bLat, bLon] = wgs2bd(wgsLat, wgsLon);
+      window.open(`https://api.map.baidu.com/marker?location=${bLat},${bLon}&title=${n}&content=${c}&output=html`);
+      break;
+    }
+    case 'google': {
+      window.open(`https://www.google.com/maps/search/?api=1&query=${wgsLat},${wgsLon}`);
+      break;
+    }
+    case 'googlestreet': {
+      window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${wgsLat},${wgsLon}`);
+      break;
+    }
+    default:
+      console.warn(`[openMap] Unknown app: ${app}`);
+  }
+}

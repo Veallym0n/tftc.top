@@ -2,6 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import NiceModal from '@ebay/nice-modal-react';
+import { openMap } from './utils/geo';
+
+// Expose openMap as a global utility for console / deeplink use
+// Usage: window.openMap('gaode' | 'baidu' | 'google' | 'googlestreet', 'GC1FB')
+(window as any).openMap = openMap;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

@@ -17,6 +17,10 @@ import { Geocache } from '../../../types';
  *    Fetches JSON from a pre-approved origin in the allow-list.
  *    Example: ?datasource=https://kevinaudio.bjcnc.scs.sohucs.com/my-caches.json
  *
+ * 3. Relative path — /data/...
+ *    Fetches JSON from the same origin, must start with an allowed path prefix.
+ *    Example: ?datasource=/data/my-caches.json
+ *
  * Optional params (both modes):
  *   ?center=lat,lng   — fly to this coordinate instead of data centroid
  *   ?mapzoom=<n>      — set map zoom level after flying
@@ -27,6 +31,11 @@ export class DataSourceHandler implements IDeepLinkHandler {
   /** Allowed origin prefixes for external HTTP data sources */
   private readonly allowedOrigins: string[] = [
     'https://kevinaudio.bjcnc.scs.sohucs.com/',
+  ];
+
+  /** Allowed relative paths for same-origin data sources */
+  private readonly allowedRelativePaths: string[] = [
+    '/'
   ];
 
   match(params: URLSearchParams): boolean {
@@ -97,7 +106,14 @@ export class DataSourceHandler implements IDeepLinkHandler {
   }
 
   private isAllowed(url: string): boolean {
-    return this.allowedOrigins.some(origin => url.startsWith(origin));
+    if (this.allowedOrigins.some(origin => url.startsWith(origin))) return true;
+
+    // Allow relative paths (same-origin), e.g. /data/my-caches.json
+    if (url.startsWith('/')) {
+      return this.allowedRelativePaths.some(prefix => url.startsWith(prefix));
+    }
+
+    return false;
   }
 
   private parseCenter(value: string | null): { lat: number; lng: number } | null {
