@@ -10,10 +10,11 @@ interface SettingsProps {
     customPinsEnabled: boolean;
     autoSync: boolean;
     clusterEnabled: boolean;
+    openInApp: boolean;
     mapType: MapType;
     exploreRadius: number;
   };
-  onToggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync' | 'clusterEnabled', val: boolean) => void;
+  onToggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync' | 'clusterEnabled' | 'openInApp', val: boolean) => void;
   onChangeRadius: (val: number) => void;
   onOpenCacheManager: () => void;
 }

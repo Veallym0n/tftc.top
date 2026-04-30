@@ -58,6 +58,8 @@ const en: Dictionary = {
     'settings.autoSync.desc': 'Download full database daily automatically',
     'settings.clusterEnabled.title': 'Marker Clustering',
     'settings.clusterEnabled.desc': 'Group nearby markers into clusters',
+    'settings.openInApp.title': 'Open in App',
+    'settings.openInApp.desc': 'Open cache links via coord.info to launch the Geocaching app',
     
     // Dataset
     'data.gpx.title': 'My GPX Files',
@@ -134,6 +136,8 @@ const zh: Dictionary = {
     'settings.autoSync.desc': '每天自动下载全量数据库',
     'settings.clusterEnabled.title': '标记点聚合',
     'settings.clusterEnabled.desc': '将邻近标记点自动聚合成簇',
+    'settings.openInApp.title': '跳转 App',
+    'settings.openInApp.desc': '开启后点击藏点链接将通过 coord.info 拉起客户端',
 
     // Dataset
     'data.gpx.title': '我的 GPX 文件',

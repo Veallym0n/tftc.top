@@ -25,6 +25,7 @@ interface MapState {
     customPinsEnabled: boolean;
     autoSync: boolean;
     clusterEnabled: boolean;
+    openInApp: boolean;
     exploreRadius: number;
   };
 
@@ -41,7 +42,7 @@ interface MapState {
   
   // Settings Actions
   initSettings: () => Promise<void>;
-  toggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync' | 'clusterEnabled', val: boolean) => void;
+  toggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync' | 'clusterEnabled' | 'openInApp', val: boolean) => void;
   setExploreRadius: (radius: number) => void;
 
   // Data Actions (Async with DB)
@@ -72,6 +73,7 @@ export const useMapStore = create<MapState>((set, get) => ({
     customPinsEnabled: false,
     autoSync: true,
     clusterEnabled: true,
+    openInApp: false,
     exploreRadius: 3,
   },
 
@@ -108,11 +110,12 @@ export const useMapStore = create<MapState>((set, get) => ({
   // --- Settings Logic ---
   initSettings: async () => {
     try {
-        const [circles, pins, sync, cluster, radius, savedMapType] = await Promise.all([
+        const [circles, pins, sync, cluster, openInApp, radius, savedMapType] = await Promise.all([
             dbService.getSetting('showCircles', false),
             dbService.getSetting('customPinsEnabled', false),
             dbService.getSetting('autoSync', true),
             dbService.getSetting('clusterEnabled', true),
+            dbService.getSetting('openInApp', false),
             dbService.getSetting('exploreRadius', 3),
             dbService.getSetting<MapType>('mapType', 'gaode') // Load mapType, default to gaode
         ]);
@@ -124,6 +127,7 @@ export const useMapStore = create<MapState>((set, get) => ({
                 customPinsEnabled: pins, 
                 autoSync: sync, 
                 clusterEnabled: cluster,
+                openInApp: openInApp,
                 exploreRadius: radius 
             } 
         });

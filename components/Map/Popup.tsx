@@ -4,6 +4,7 @@ import { Geocache } from '../../types';
 import { CONFIG } from '../../constants';
 import { IconShare } from '../Icons';
 import { openAppScheme } from '../../utils/geo';
+import { useMapStore } from '../../stores/useMapStore';
 
 interface PopupProps {
   cache: Geocache;
@@ -14,6 +15,11 @@ interface PopupProps {
 const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
   const containerName = CONFIG.containerTypes[cache.containerType] || 'Other';
   const typeConfig = CONFIG.cacheTypes[cache.geocacheType] || { name: 'Unknown', color: '#94a3b8' };
+  const openInApp = useMapStore((s) => s.settings.openInApp);
+  const showToast = useMapStore((s) => s.showToast);
+  const cacheUrl = openInApp
+    ? `https://coord.info/${cache.code}`
+    : `https://www.geocaching.com/geocache/${cache.code}`;
   
   // Format dates to YYYY-MM-DD
   const placedDate = cache.placedDate ? cache.placedDate.split(' ')[0] : '-';
@@ -25,7 +31,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
     const url = `https://coord.info/${cache.code}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
-        // Optional: show a toast or some feedback
+        showToast('链接已复制');
       });
     }
   };
@@ -71,7 +77,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
           <div className="p-4 bg-white">
             {/* Title */}
             <a 
-              href={`https://coord.info/${cache.code}`} 
+              href={cacheUrl} 
               target="_blank" 
               rel="noreferrer" 
               className="block text-lg font-black text-slate-900 leading-tight mb-2 hover:underline decoration-2 underline-offset-2"

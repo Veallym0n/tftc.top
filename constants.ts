@@ -45,7 +45,8 @@ export const CONFIG: AppConfig = {
     { id: 'showCircles', label: '161m Proximity Circles', desc: 'Show exclusion zones around caches' },
     { id: 'customPinsEnabled', label: 'Custom Pins Mode', desc: 'Long press map to drop temporary pins' },
     { id: 'autoSync', label: 'Auto Offline Sync', desc: 'Download full database daily automatically' },
-    { id: 'clusterEnabled', label: 'Marker Clustering', desc: 'Group nearby markers into clusters' }
+    { id: 'clusterEnabled', label: 'Marker Clustering', desc: 'Group nearby markers into clusters' },
+    { id: 'openInApp', label: 'Open in App', desc: 'Open cache links with coord.info to launch the Geocaching app' }
   ],
   aboutText: 'tftc.top, 致力于通过数据描述中国境内 geocaching 的发展现状。'
 };
