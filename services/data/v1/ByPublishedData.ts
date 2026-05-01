@@ -1,7 +1,6 @@
 
 import { IDataSource } from '../DataSource';
 import { Geocache } from '../../../types';
-import { CONFIG } from '../../../constants';
 import { fetchWithRetry, processStandardResponse } from './fetchUtils';
 
 export class ByPublishedData implements IDataSource {
@@ -9,7 +8,8 @@ export class ByPublishedData implements IDataSource {
   private url: string;
 
   constructor() {
-    this.url = `${CONFIG.apiBase}/caches/${CONFIG.endpoints.by_published}`;
+    //this.url = `${CONFIG.apiBase}/caches/${CONFIG.endpoints.by_published}`;
+    this.url = 'http://kevinaudio.bjcnc.scs.sohucs.com/geocaches_newpublish.gz';
   }
 
   async fetch(): Promise<Geocache[]> {
