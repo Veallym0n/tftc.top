@@ -29,6 +29,7 @@ export const MapLayer: React.FC<MapLayerProps> = ({ url, isDefault, maxZoom = 18
         
         if (isDefault) {
             layer.addTo(map);
+            map.setMaxZoom(maxZoom);
         }
 
         return () => {
