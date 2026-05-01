@@ -9,7 +9,7 @@ export class ByPublishedData implements IDataSource {
 
   constructor() {
     //this.url = `${CONFIG.apiBase}/caches/${CONFIG.endpoints.by_published}`;
-    this.url = 'http://kevinaudio.bjcnc.scs.sohucs.com/geocaches_newpublish.gz';
+    this.url = 'https://kevinaudio.bjcnc.scs.sohucs.com/geocaches_newpublish.gz';
   }
 
   async fetch(): Promise<Geocache[]> {
