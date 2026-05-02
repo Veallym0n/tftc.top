@@ -14,6 +14,7 @@ import { getFilterModalText, getFilterSphereLocaleText } from './locale';
 import { toOfflineCacheFilterRecord } from './normalize';
 import { offlineCacheFilterSchema } from './schema';
 import { filterSphereTheme } from './theme';
+import { useOfflineFilterRuleStore } from './useOfflineFilterRuleStore';
 
 const modalClasses = {
   ...defaultModalClasses,
@@ -28,6 +29,8 @@ const LocalOfflineFilterModal = NiceModal.create(() => {
   const setCaches = useMapStore((state) => state.setCaches);
   const setDrawerOpen = useMapStore((state) => state.setDrawerOpen);
   const showToast = useMapStore((state) => state.showToast);
+  const ruleValue = useOfflineFilterRuleStore((state) => state.ruleValue);
+  const setRuleValue = useOfflineFilterRuleStore((state) => state.setRuleValue);
 
   const [offlineCaches, setOfflineCaches] = useState<Geocache[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +43,10 @@ const LocalOfflineFilterModal = NiceModal.create(() => {
     useFilterSphere({
       schema: offlineCacheFilterSchema,
       getLocaleText: localeText,
+      ruleValue,
+      onRuleChange: ({ filterRule }) => {
+        setRuleValue(filterRule);
+      },
     });
 
   useEffect(() => {
