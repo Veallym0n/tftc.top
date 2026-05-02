@@ -15,7 +15,12 @@ export const PreviewCacheCard = ({
   const { cache, filterItem } = record;
 
   return (
-    <div className="rounded-2xl border-2 border-memphis-dark bg-white p-3 shadow-memphis-sm">
+    <a
+      href={`https://www.geocaching.com/geocache/${cache.code}`}
+      target="_blank"
+      rel="noreferrer"
+      className="block rounded-2xl border-2 border-memphis-dark bg-white p-3 shadow-memphis-sm transition-all hover:-translate-y-0.5 hover:shadow-memphis focus:outline-none focus:ring-4 focus:ring-memphis-blue/20 active:translate-y-0.5 active:shadow-memphis-sm"
+    >
       <div className="flex items-center justify-between gap-2">
         <span className="rounded-md bg-slate-900 px-2 py-1 font-mono text-xs font-bold text-white">
           {cache.code}
@@ -43,6 +48,6 @@ export const PreviewCacheCard = ({
           FP {filterItem.favoritePoints}
         </span>
       </div>
-    </div>
+    </a>
   );
 };
