@@ -17,6 +17,7 @@ export const CONFIG: AppConfig = {
     { name: 'Geocaching 官方', url: 'https://www.geocaching.com', icon: '🌐' },
     { name: 'Geodataing 数据统计', url: 'https://geodataing.vercel.app', icon: '📊' },
     { name: 'NanoApe 的新人入门站', url: 'https://geoguide.top', icon: '🏆' },
+    { name: 'Geocaching 排行榜', url:'https://vote.geocaching.cn', icon: '📈' },
     { name: 'Geocaching CN', url: 'https://www.geocaching.cn', icon: '🇨🇳' }
   ],
   cacheTypes: {

@@ -31,6 +31,8 @@ export class DataSourceHandler implements IDeepLinkHandler {
   /** Allowed origin prefixes for external HTTP data sources */
   private readonly allowedOrigins: string[] = [
     'https://kevinaudio.bjcnc.scs.sohucs.com/',
+    'https://workapi.myapi.ren/',
+    'https://tftc.top/'
   ];
 
   /** Allowed relative paths for same-origin data sources */
