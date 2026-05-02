@@ -71,11 +71,6 @@ const FilterLabModal = NiceModal.create(() => {
       isOpen={modal.visible}
       onClose={modal.remove}
       title={text.title}
-      headerActions={
-        <span className="rounded-lg border-2 border-memphis-dark bg-memphis-yellow px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-900">
-          {text.sourceValue}
-        </span>
-      }
       footer={null}
     >
       <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1.15fr)_minmax(0,0.95fr)] gap-0 lg:grid-cols-[minmax(0,1.35fr)_minmax(26rem,0.95fr)] lg:grid-rows-1">

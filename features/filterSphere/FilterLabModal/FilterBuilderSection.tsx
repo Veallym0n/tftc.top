@@ -28,9 +28,6 @@ export const FilterBuilderSection = ({
     <section className="flex min-h-0 flex-col border-b-2 border-memphis-dark bg-cream lg:border-b-0 lg:border-r-2">
       <div className="border-b-2 border-memphis-dark bg-white px-6 py-4">
         <div className="text-sm font-bold text-slate-800">{text.subtitle}</div>
-        <div className="mt-2 text-xs font-black uppercase tracking-wide text-slate-400">
-          {text.sourceLabel}: {text.sourceValue}
-        </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-auto p-6">
