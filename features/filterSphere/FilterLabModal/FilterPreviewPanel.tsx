@@ -55,23 +55,21 @@ export const FilterPreviewPanel = ({
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4">
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <div className="grid gap-3">
-            {!isLoading && previewRecords.length === 0 && (
-              <div className="rounded-2xl border-2 border-memphis-dark bg-white p-4 text-sm font-bold text-slate-500 shadow-memphis-sm">
-                {text.previewEmpty}
-              </div>
-            )}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="grid gap-3 p-4 pr-3">
+          {!isLoading && previewRecords.length === 0 && (
+            <div className="rounded-2xl border-2 border-memphis-dark bg-white p-4 text-sm font-bold text-slate-500 shadow-memphis-sm">
+              {text.previewEmpty}
+            </div>
+          )}
 
-            {previewRecords.map((record) => (
-              <PreviewCacheCard
-                key={record.cache.code}
-                record={record}
-                localeText={localeText}
-              />
-            ))}
-          </div>
+          {previewRecords.map((record) => (
+            <PreviewCacheCard
+              key={record.cache.code}
+              record={record}
+              localeText={localeText}
+            />
+          ))}
         </div>
       </div>
 
