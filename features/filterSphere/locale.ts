@@ -84,10 +84,8 @@ const filterLocaleByLanguage = {
 
 const modalTextByLanguage = {
   en: {
-    title: 'Offline Filter Lab',
+    title: 'Cache Filter Lab',
     subtitle: 'Build local rules against the IndexedDB offline cache, then apply the result to the map.',
-    sourceLabel: 'Source',
-    sourceValue: 'Offline cache only',
     loading: 'Loading offline cache data...',
     empty: 'No offline cache data found. Download the offline dataset first, then reopen this tool.',
     error: 'Failed to load offline cache data.',
@@ -107,8 +105,6 @@ const modalTextByLanguage = {
   zh: {
     title: '离线过滤工作台',
     subtitle: '基于 IndexedDB 里的离线全库构建过滤规则，然后把结果一次性应用到地图。',
-    sourceLabel: '数据源',
-    sourceValue: '仅离线缓存',
     loading: '正在加载离线缓存数据...',
     empty: '当前没有离线缓存数据。请先下载离线全量数据，再打开这个工具。',
     error: '加载离线缓存数据失败。',

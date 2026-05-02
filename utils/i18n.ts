@@ -19,7 +19,7 @@ const en: Dictionary = {
     'tools.smart.desc': 'Convert coordinates & Launch Maps',
     'tools.search.title': 'Search Cache',
     'tools.search.desc': 'Find offline cache by GC Code',
-    'tools.filter.title': 'Offline Filter Lab',
+    'tools.filter.title': 'Cache Filter Lab',
     'tools.filter.desc': 'Build advanced rules from local offline caches',
     
     // Smart Tool
