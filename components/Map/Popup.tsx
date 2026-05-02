@@ -46,7 +46,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
   return (
     // Outer Container: Needs extra padding at bottom/right for the hard shadow to not get clipped by Leaflet's overflow handling if any
     <div className="pb-2 pr-2"> 
-        <div className="bg-white w-[280px] font-sans text-slate-900 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.45)]">
+        <div className="bg-white w-[300px] font-sans text-slate-900 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.45)]">
           {/* Header Band */}
           <div 
             className="flex justify-between items-center px-3 py-2 border-b-2 border-black relative group" 
@@ -57,7 +57,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             </span>
             
             <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] text-white/90 font-bold bg-black/20 px-1 rounded">
+                <span className="font-mono text-[13px] text-white/90 font-bold bg-black/20 px-1 rounded">
                     {cache.code}
                 </span>
                 
@@ -74,7 +74,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             </div>
           </div>
           
-          <div className="p-4 bg-white">
+          <div className="p-3 bg-white">
             {/* Title */}
             <a 
               href={cacheUrl} 
@@ -86,11 +86,16 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             </a>
 
             {/* Owner */}
-            <div className="text-xs font-bold text-slate-500 mb-4 flex items-center gap-1">
-                By <span className="text-black bg-slate-100 px-1 border border-black">
-                <a href={`https://www.geocaching.com/p/?u=${cache.ownerUsername}`} target="_blank" rel="noreferer">
-                {cache.ownerUsername}
-                </a>
+            <div className="text-xs font-bold text-slate-500 mt-2 mb-4 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1">
+                  By <span className="text-black bg-slate-100 px-1 border border-black">
+                  <a href={`https://www.geocaching.com/p/?u=${cache.ownerUsername}`} target="_blank" rel="noreferer">
+                  {cache.ownerUsername}
+                  </a>
+                  </span>
+                </div>
+                <span className="text-slate-600 border px-1 italic text-[11px]">
+                 PLACED: {placedDate.toString().substring(0, 10)}
                 </span>
             </div>
 
@@ -112,26 +117,26 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
                 )}
             </div>
 
-            {/* Dates (Subtle) */}
-            <div className="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wide mb-4 border-t-2 border-dashed border-slate-200 pt-2">
-                <div>Placed: <span className="text-slate-600">{placedDate}</span></div>
-                <div>Found: <span className="text-slate-600">{foundDate}</span></div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-3">
-              <button 
-                className="py-2 bg-memphis-blue text-white rounded border-2 border-black font-black text-xs uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-sky-400 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
-                onClick={handleOpenApp('amap')}
-              >
-                高德 Amap
-              </button>
-              <button 
-                className="py-2 bg-indigo-600 text-white rounded border-2 border-black font-black text-xs uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-indigo-700 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
-                onClick={handleOpenApp('baidu')}
-              >
-                百度 Baidu
-              </button>
+            {/* Dates + Action Buttons */}
+            <div className="flex items-center justify-between border-t-2 border-dashed border-slate-200 pt-2 mb-0">
+                <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wide">
+                  <div>Last Found </div>
+                  <span className="text-slate-600">{foundDate.toString().substring(0, 10)}</span>
+                </div>
+                <div className="flex gap-1.5">
+                  <button
+                    className="px-2 py-1.5 bg-memphis-blue text-white border-2 border-black font-black text-[10px] uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-sky-400 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
+                    onClick={handleOpenApp('amap')}
+                  >
+                    Amap
+                  </button>
+                  <button
+                    className="px-2 py-1 bg-indigo-600 text-white border-2 border-black font-black text-[10px] uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-indigo-700 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
+                    onClick={handleOpenApp('baidu')}
+                  >
+                    Baidu
+                  </button>
+                </div>
             </div>
           </div>
         </div>
