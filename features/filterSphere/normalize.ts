@@ -3,7 +3,6 @@ import {
   CacheTypeValue,
   ContainerTypeValue,
   OfflineCacheFilterItem,
-  OfflineCacheFilterRecord,
 } from './types';
 
 const CACHE_TYPE_MAP: Record<number, CacheTypeValue> = {
@@ -73,10 +72,3 @@ export const normalizeOfflineCache = (
     isFTFLike: !hasLastFound || lastFound.year <= 1970,
   };
 };
-
-export const toOfflineCacheFilterRecord = (
-  cache: Geocache,
-): OfflineCacheFilterRecord => ({
-  cache,
-  filterItem: normalizeOfflineCache(cache),
-});
