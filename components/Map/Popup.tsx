@@ -46,10 +46,10 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
   return (
     // Outer Container: Needs extra padding at bottom/right for the hard shadow to not get clipped by Leaflet's overflow handling if any
     <div className="pb-2 pr-2"> 
-        <div className="bg-white w-[300px] font-sans text-slate-900 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.45)]">
+        <div className="bg-white w-[320px] font-sans text-slate-900 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.45)]">
           {/* Header Band */}
           <div 
-            className="flex justify-between items-center px-3 py-2 border-b-2 border-black relative group" 
+            className="flex justify-between items-center px-3 py-1.5 border-b-2 border-black relative group" 
             style={{ backgroundColor: typeConfig.color }}
           >
             <span className="font-black text-white text-sm uppercase tracking-wider drop-shadow-md">
@@ -57,13 +57,13 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             </span>
             
             <div className="flex items-center gap-2">
-                <span className="font-mono text-[13px] text-white/90 font-bold bg-black/20 px-1 rounded">
+                <span className="bg-black/20 text-white text-[12px] px-1.5 py-0.5 rounded font-bold">
                     {cache.code}
                 </span>
                 
                 {/* Share Button (Resized to be smaller) */}
                 <button 
-                  className="w-5 h-5 flex items-center justify-center bg-white/20 rounded hover:bg-white/40 text-white transition-colors js-map-action active:scale-95"
+                  className="w-5 h-5 flex items-center justify-center bg-white/0 rounded hover:bg-white/40 text-white transition-colors js-map-action active:scale-95"
                   onClick={handleShare}
                   title="Copy Link"
                 >
@@ -74,27 +74,27 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             </div>
           </div>
           
-          <div className="p-3 bg-white">
+          <div className="p-3.5 bg-white">
             {/* Title */}
             <a 
               href={cacheUrl} 
               target="_blank" 
               rel="noreferrer" 
-              className="block text-lg font-black text-slate-900 leading-tight mb-2 hover:underline decoration-2 underline-offset-2"
+              className="block text-lg font-black text-slate-900 leading-tight mb-3 hover:underline decoration-2 underline-offset-42"
             >
               {cache.name}
             </a>
 
             {/* Owner */}
-            <div className="text-xs font-bold text-slate-500 mt-2 mb-4 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1">
-                  By <span className="text-black bg-slate-100 px-1 border border-black">
+            <div className="text-sm  font-bold text-slate-500 mt-2 mb-4 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1 text-[12px] text-slate-400 tracking-wide">
+                  By <span className="text-black px-1 italic tracking-wide border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <a href={`https://www.geocaching.com/p/?u=${cache.ownerUsername}`} target="_blank" rel="noreferer">
                   {cache.ownerUsername}
                   </a>
                   </span>
                 </div>
-                <span className="text-slate-600 border px-1 italic text-[11px]">
+                <span className="bg-gray-50 border border-gray-200 px-1.5 py-0.5 text-[11px] font-bold italic text-gray-400">
                  PLACED: {placedDate.toString().substring(0, 10)}
                 </span>
             </div>
@@ -121,20 +121,20 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             <div className="flex items-center justify-between border-t-2 border-dashed border-slate-200 pt-2 mb-0">
                 <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wide">
                   <div>Last Found </div>
-                  <span className="text-slate-600">{foundDate.toString().substring(0, 10)}</span>
+                  <span className="text-slate-900 text-[11px] font-black">{foundDate.toString().substring(0, 10)}</span>
                 </div>
                 <div className="flex gap-1.5">
                   <button
-                    className="px-2 py-1.5 bg-memphis-blue text-white border-2 border-black font-black text-[10px] uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-sky-400 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
+                    className="px-2 py-1.5 bg-memphis-blue text-white border-2 border-black font-black text-[12px] uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-sky-400 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
                     onClick={handleOpenApp('amap')}
                   >
-                    Amap
+                    高德地图
                   </button>
                   <button
-                    className="px-2 py-1 bg-indigo-600 text-white border-2 border-black font-black text-[10px] uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-indigo-700 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
+                    className="px-2 py-1 bg-indigo-600 text-white border-2 border-black font-black text-[12px] uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,0.45)] hover:translate-y-px hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,0.45)] hover:bg-indigo-700 transition-all active:translate-y-0.5 active:shadow-none js-map-action"
                     onClick={handleOpenApp('baidu')}
                   >
-                    Baidu
+                    百度地图
                   </button>
                 </div>
             </div>
