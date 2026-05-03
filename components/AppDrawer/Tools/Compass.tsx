@@ -112,6 +112,9 @@ const Compass = NiceModal.create(() => {
     };
   }, [startSmoothing]);
 
+  // 模式：true=转罗盘（表盘转，指针朝上），false=转指针（表盘固定，指针跟转）
+  const [rotateCompass, setRotateCompass] = useState(true);
+
   // 复制坐标
   const [copied, setCopied] = useState(false);
   const handleCopyCoords = () => {
@@ -126,7 +129,9 @@ const Compass = NiceModal.create(() => {
 
   const { lat, lng, gpsAccuracy, error, permissionDenied } = state;
   const heading = displayHeading;
-  const needleRotate = heading != null ? `rotate(${heading}deg)` : 'none';
+  // 转罗盘：表盘逆向旋转，指针固定；转指针：表盘固定，指针顺向旋转
+  const dialRotate = rotateCompass && heading != null ? `rotate(${-heading}deg)` : 'none';
+  const needleRotate = !rotateCompass && heading != null ? `rotate(${heading}deg)` : 'none';
 
   return (
     <Modal
@@ -138,8 +143,13 @@ const Compass = NiceModal.create(() => {
     >
       {/* 指南针表盘 */}
       <div className="relative w-48 h-48 select-none">
-        {/* 表盘背景 */}
-        <div className="absolute inset-0 rounded-full border-4 border-memphis-dark bg-cream shadow-memphis-lg flex items-center justify-center">
+        {/* 外环（固定，不旋转） */}
+        <div className="absolute inset-0 rounded-full border-4 border-memphis-dark" />
+        {/* 表盘内容（转罗盘时旋转） */}
+        <div
+          className="absolute inset-0 rounded-full bg-cream flex items-center justify-center"
+          style={{ transform: dialRotate }}
+        >
           {/* 方位刻度文字 */}
           {['N','E','S','W'].map((d, i) => {
             const angle = i * 90;
@@ -150,42 +160,67 @@ const Compass = NiceModal.create(() => {
             return (
               <span
                 key={d}
-                className="absolute text-xs font-black text-memphis-dark"
+                className={`absolute text-sm font-black ${d === 'N' ? 'text-red-500' : 'text-memphis-dark'}`}
                 style={{ left: x, top: y, transform: 'translate(-50%,-50%)' }}
               >
                 {d}
               </span>
             );
           })}
-          {/* 指针 */}
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ transform: needleRotate }}
-          >
-            {/* 北针（红） */}
-            <div className="absolute top-[24px] left-1/2 -translate-x-1/2 w-0 h-0"
-              style={{ borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderBottom: '52px solid #ef4444' }} />
-            {/* 南针（灰） */}
-            <div className="absolute bottom-[24px] left-1/2 -translate-x-1/2 w-0 h-0"
-              style={{ borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderTop: '52px solid #94a3b8' }} />
-            {/* 中心圆 */}
-            <div className="w-4 h-4 rounded-full bg-memphis-dark border-2 border-white z-10" />
-          </div>
+        </div>
+        {/* 指针层（转指针时旋转，转罗盘时固定朝上） */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ transform: needleRotate }}
+        >
+          {/* 北针（红） */}
+          <div className="absolute top-[24px] left-1/2 -translate-x-1/2 w-0 h-0"
+            style={{ borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderBottom: '52px solid #ef4444' }} />
+          {/* 南针（灰） */}
+          <div className="absolute bottom-[24px] left-1/2 -translate-x-1/2 w-0 h-0"
+            style={{ borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderTop: '52px solid #94a3b8' }} />
+          {/* 中心圆 */}
+          <div className="w-4 h-4 rounded-full bg-memphis-dark border-2 border-white z-10" />
         </div>
       </div>
 
-      {/* 方位角数字 */}
-      <div className="text-center">
-        {permissionDenied ? (
-          <p className="text-xs text-red-500 font-medium">陀螺仪权限被拒绝</p>
-        ) : heading != null ? (
-          <>
-            <div className="text-4xl font-black text-memphis-dark tabular-nums">{heading}°</div>
-            <div className="text-sm font-bold text-slate-500">{headingToDir(heading)}</div>
-          </>
-        ) : (
-          <p className="text-xs text-slate-400">等待陀螺仪数据…</p>
-        )}
+      {/* 方位角数字 + 模式切换 */}
+      <div className="flex flex-col items-center gap-2">
+        <div className="text-center">
+          {permissionDenied ? (
+            <p className="text-xs text-red-500 font-medium">陀螺仪权限被拒绝</p>
+          ) : heading != null ? (
+            <>
+              <div className="text-4xl font-black text-memphis-dark tabular-nums">{heading}°</div>
+              <div className="text-sm font-bold text-slate-500">{headingToDir(heading)}</div>
+            </>
+          ) : (
+            <p className="text-xs text-slate-400">等待陀螺仪数据…</p>
+          )}
+        </div>
+        {/* 模式切换按钮 */}
+        <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 border-2 border-memphis-dark">
+          <button
+            onClick={() => setRotateCompass(true)}
+            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+              rotateCompass
+                ? 'bg-memphis-dark text-white shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            转罗盘
+          </button>
+          <button
+            onClick={() => setRotateCompass(false)}
+            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+              !rotateCompass
+                ? 'bg-memphis-dark text-white shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            转指针
+          </button>
+        </div>
       </div>
 
       {/* GPS 坐标 */}
