@@ -88,14 +88,14 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             {/* Owner */}
             <div className="text-sm  font-bold text-slate-500 mt-2 mb-4 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1 text-[12px] text-slate-400 tracking-wide">
-                  By <span className="text-black px-1 italic tracking-wide border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  By <span className="text-black px-1 italic tracking-wide border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] truncate max-w-32">
                   <a href={`https://www.geocaching.com/p/?u=${cache.ownerUsername}`} target="_blank" rel="noreferer">
                   {cache.ownerUsername}
                   </a>
                   </span>
                 </div>
                 <span className="bg-gray-50 border border-gray-200 px-1.5 py-0.5 text-[11px] font-bold italic text-gray-400">
-                 PLACED: {placedDate.toString().substring(0, 10)}
+                 {placedDate.toString().substring(0, 10)}
                 </span>
             </div>
 
