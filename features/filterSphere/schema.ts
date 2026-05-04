@@ -2,7 +2,6 @@ import { presetFilter, type FnSchema } from '@fn-sphere/filter';
 import { z } from 'zod';
 import { CACHE_TYPE_VALUES, CONTAINER_TYPE_VALUES } from './types';
 
-export const CACHE_RATING_FILTER_INPUT = 'cacheRating';
 
 const filterPriority = [
   'contains',
@@ -22,13 +21,18 @@ export const filterFnList: FnSchema[] = presetFilter
     );
   });
 
+export const CACHE_RATING_FILTER_INPUT = 'cacheRating';
+
 const cacheRatingSchema = (description: string) => {
-  return z.number().describe(description).meta({
-    filterInput: CACHE_RATING_FILTER_INPUT,
-    min: 1,
-    max: 5,
-    step: 0.5,
-  });
+  return z
+    .number()
+    .min(1)
+    .max(5)
+    .multipleOf(0.5)
+    .describe(description)
+    .meta({
+      filterInput: CACHE_RATING_FILTER_INPUT,
+    });
 };
 
 export const offlineCacheFilterSchema = z.object({
