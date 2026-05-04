@@ -1,28 +1,28 @@
-import { Geocache } from '../../types';
+import { Geocache } from "../../types";
 
 export const CACHE_TYPE_VALUES = [
-  'traditional',
-  'multi',
-  'mystery',
-  'virtual',
-  'letterbox',
-  'event',
-  'cito',
-  'wherigo',
-  'celebration',
-  'earth',
-  'webcam',
-  'other',
+  "traditional",
+  "multi",
+  "mystery",
+  "virtual",
+  "letterbox",
+  "event",
+  "cito",
+  "wherigo",
+  "celebration",
+  "earth",
+  "webcam",
+  "other",
 ] as const;
 
 export const CONTAINER_TYPE_VALUES = [
-  'unknown',
-  'micro',
-  'regular',
-  'large',
-  'virtual',
-  'other',
-  'small',
+  "unknown",
+  "micro",
+  "regular",
+  "large",
+  "virtual",
+  "other",
+  "small",
 ] as const;
 
 export type CacheTypeValue = (typeof CACHE_TYPE_VALUES)[number];
@@ -40,9 +40,18 @@ export interface OfflineCacheFilterItem {
   longitude: number;
   favoritePoints: number;
   placedDate: Date;
+  /**
+   * @deprecated
+   */
   hasLastFound: boolean;
   lastFoundDate: Date;
+  /**
+   * @deprecated
+   */
   isEventLike: boolean;
+  /**
+   * @deprecated
+   */
   isFTFLike: boolean;
 }
 
