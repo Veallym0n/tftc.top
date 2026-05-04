@@ -29,25 +29,44 @@ const CONTAINER_TYPE_MAP: Record<number, ContainerTypeValue> = {
   8: "small",
 };
 
-const parseDateParts = (value: string | undefined) => {
+const makeUtcDate = (year: number, month: number, day: number) => {
+  const date = new Date(Date.UTC(year, month - 1, day));
+  date.setUTCFullYear(year);
+  return date;
+};
+
+const MISSING_PLACED_DATE = new Date(0);
+const MISSING_LAST_FOUND_DATE = new Date(0);
+
+const parseCacheDate = (value: string | undefined) => {
   const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) {
-    return { year: 0, month: 0, day: 0 };
+    return undefined;
   }
 
-  return {
-    year: Number(match[1]),
-    month: Number(match[2]),
-    day: Number(match[3]),
-  };
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = makeUtcDate(year, month, day);
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return undefined;
+  }
+
+  return date;
 };
 
 export const normalizeOfflineCache = (
   cache: Geocache,
 ): OfflineCacheFilterItem => {
-  const placed = parseDateParts(cache.placedDate);
-  const lastFound = parseDateParts(cache.lastFoundDate);
-  const hasLastFound = lastFound.year > 0;
+  const parsedPlaced = parseCacheDate(cache.placedDate);
+  const parsedLastFound = parseCacheDate(cache.lastFoundDate);
+  const placedDate = parsedPlaced ?? MISSING_PLACED_DATE;
+  const lastFoundDate = parsedLastFound ?? MISSING_LAST_FOUND_DATE;
+  const hasLastFound = parsedLastFound !== undefined;
 
   return {
     code: cache.code ?? "",
@@ -60,15 +79,13 @@ export const normalizeOfflineCache = (
     latitude: cache.latitude,
     longitude: cache.longitude,
     favoritePoints: cache.favoritePoints,
-    placedYear: placed.year,
-    placedMonth: placed.month,
-    placedDay: placed.day,
+    placedDate,
     hasLastFound,
-    lastFoundYear: lastFound.year,
+    lastFoundDate,
     isEventLike:
       cache.geocacheType === 6 ||
       cache.geocacheType === 13 ||
       cache.geocacheType === 69,
-    isFTFLike: !hasLastFound || lastFound.year <= 1970,
+    isFTFLike: !hasLastFound || lastFoundDate.getUTCFullYear() <= 1970,
   };
 };

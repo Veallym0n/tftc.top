@@ -39,11 +39,9 @@ export interface OfflineCacheFilterItem {
   latitude: number;
   longitude: number;
   favoritePoints: number;
-  placedYear: number;
-  placedMonth: number;
-  placedDay: number;
+  placedDate: Date;
   hasLastFound: boolean;
-  lastFoundYear: number;
+  lastFoundDate: Date;
   isEventLike: boolean;
   isFTFLike: boolean;
 }
