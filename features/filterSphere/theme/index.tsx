@@ -5,6 +5,7 @@ import {
   OptionHTMLAttributes,
   SelectHTMLAttributes,
 } from 'react';
+import { cacheRatingInputView } from './RatingInput';
 
 const cx = (...values: Array<string | undefined>) => {
   return values.filter(Boolean).join(' ');
@@ -65,6 +66,7 @@ const OptionPrimitive = ({
 };
 
 export const filterSphereTheme = createFilterTheme({
+  dataInputViews: [cacheRatingInputView],
   primitives: {
     button: ButtonPrimitive,
     input: InputPrimitive,
