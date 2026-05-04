@@ -23,11 +23,9 @@ export const offlineCacheFilterSchema = z.object({
   latitude: z.number().describe('filter.field.latitude'),
   longitude: z.number().describe('filter.field.longitude'),
   favoritePoints: z.number().describe('filter.field.favoritePoints'),
-  placedYear: z.number().describe('filter.field.placedYear'),
-  placedMonth: z.number().describe('filter.field.placedMonth'),
-  placedDay: z.number().describe('filter.field.placedDay'),
+  placedDate: z.date().describe('filter.field.placedDate'),
   hasLastFound: z.boolean().describe('filter.field.hasLastFound'),
-  lastFoundYear: z.number().describe('filter.field.lastFoundYear'),
+  lastFoundDate: z.date().describe('filter.field.lastFoundDate'),
   isEventLike: z.boolean().describe('filter.field.isEventLike'),
   isFTFLike: z.boolean().describe('filter.field.isFTFLike'),
 });
