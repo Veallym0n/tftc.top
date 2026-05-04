@@ -20,6 +20,8 @@ export const offlineCacheFilterSchema = z.object({
   containerType: z.enum(CONTAINER_TYPE_VALUES).describe('filter.field.containerType'),
   difficulty: cacheRatingSchema('filter.field.difficulty'),
   terrain: cacheRatingSchema('filter.field.terrain'),
+  latitude: z.number().describe('filter.field.latitude'),
+  longitude: z.number().describe('filter.field.longitude'),
   favoritePoints: z.number().describe('filter.field.favoritePoints'),
   placedYear: z.number().describe('filter.field.placedYear'),
   placedMonth: z.number().describe('filter.field.placedMonth'),
