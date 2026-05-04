@@ -73,7 +73,7 @@ const FilterLabModal = NiceModal.create(() => {
       title={text.title}
       footer={null}
     >
-      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1.15fr)_minmax(0,0.95fr)] gap-0 lg:grid-cols-[minmax(0,1.35fr)_minmax(26rem,0.95fr)] lg:grid-rows-1">
+      <div className="grid min-h-0 min-w-0 flex-1 overflow-hidden grid-rows-[minmax(0,1.15fr)_minmax(0,0.95fr)] gap-0 lg:grid-cols-[minmax(0,1.35fr)_minmax(26rem,0.95fr)] lg:grid-rows-1">
         <FilterBuilderSection
           text={text}
           isLoading={isLoading}

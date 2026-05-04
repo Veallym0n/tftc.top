@@ -25,7 +25,7 @@ export const FilterBuilderSection = ({
   context,
 }: FilterBuilderSectionProps) => {
   return (
-    <section className="flex min-h-0 flex-col border-b-2 border-memphis-dark bg-cream lg:border-b-0 lg:border-r-2">
+    <section className="flex min-h-0 min-w-0 flex-col border-b-2 border-memphis-dark bg-cream lg:border-b-0 lg:border-r-2">
       <div className="border-b-2 border-memphis-dark bg-white px-6 py-4">
         <div className="text-sm font-bold text-slate-800">{text.subtitle}</div>
       </div>

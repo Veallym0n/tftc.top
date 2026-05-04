@@ -40,23 +40,23 @@ export const FilterPreviewPanel = ({
     .replace('{rules}', String(totalRuleCount));
 
   return (
-    <aside className="flex min-h-0 overflow-hidden flex-col bg-slate-50">
-      <div className="shrink-0 border-b-2 border-memphis-dark bg-white px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-xs font-black uppercase tracking-wide text-slate-400">
+    <aside className="flex min-h-0 min-w-0 overflow-hidden flex-col bg-slate-50">
+      <div className="min-w-0 shrink-0 border-b-2 border-memphis-dark bg-white px-3 py-3 sm:px-4 sm:py-4">
+        <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
+          <div className="min-w-0 truncate text-xs font-black uppercase tracking-wide text-slate-400">
             {text.previewTitle}
           </div>
-          <span className="rounded-lg border-2 border-memphis-dark bg-cream px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
+          <span className="max-w-[60%] shrink-0 truncate rounded-lg border-2 border-memphis-dark bg-cream px-2 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
             {text.matched}: {filteredRecords.length.toLocaleString()}
           </span>
         </div>
-        <div className="mt-2 text-sm font-bold leading-snug text-slate-700">
+        <div className="mt-2 break-words text-sm font-bold leading-snug text-slate-700">
           {previewSummary}
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="grid gap-3 p-4 pr-3">
+      <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+        <div className="grid gap-2 p-2.5 sm:gap-3 sm:p-4 sm:pr-3">
           {!isLoading && previewRecords.length === 0 && (
             <div className="rounded-2xl border-2 border-memphis-dark bg-white p-4 text-sm font-bold text-slate-500 shadow-memphis-sm">
               {text.previewEmpty}
