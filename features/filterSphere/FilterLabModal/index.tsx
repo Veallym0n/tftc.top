@@ -6,7 +6,7 @@ import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useMapStore } from '../../../stores/useMapStore';
 import { getFilterModalText, getFilterSphereLocaleText } from '../locale';
 import { normalizeOfflineCache } from '../normalize';
-import { offlineCacheFilterSchema } from '../schema';
+import { filterFnList, offlineCacheFilterSchema } from '../schema';
 import { useOfflineFilterRuleStore } from '../useOfflineFilterRuleStore';
 import { FilterBuilderSection } from './FilterBuilderSection';
 import { FilterPreviewPanel } from './FilterPreviewPanel';
@@ -31,6 +31,7 @@ const FilterLabModal = NiceModal.create(() => {
   const { predicate, totalRuleCount, validRuleCount, reset, context } =
     useFilterSphere({
       schema: offlineCacheFilterSchema,
+      filterFnList,
       getLocaleText: localeText,
       ruleValue,
       onRuleChange: ({ filterRule }) => {
