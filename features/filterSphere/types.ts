@@ -36,6 +36,8 @@ export interface OfflineCacheFilterItem {
   containerType: ContainerTypeValue;
   difficulty: number;
   terrain: number;
+  latitude: number;
+  longitude: number;
   favoritePoints: number;
   placedYear: number;
   placedMonth: number;
