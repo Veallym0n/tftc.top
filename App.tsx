@@ -11,6 +11,12 @@ import { useAppController } from './hooks/useAppController';
 import { eventService } from './services/eventService';
 import CacheManagerModal from './components/AppDrawer/Modals/CacheManagerModal';
 
+// Detect if running inside an iframe (once, outside component)
+const isInIframe = window.self !== window.top;
+
+// Detect ?cluster=false URL param (once, outside component)
+const urlClusterDisabled = new URLSearchParams(window.location.search).get('cluster') === 'false';
+
 const App: React.FC = () => {
   // 1. Global State from Zustand
   const { 
@@ -23,6 +29,9 @@ const App: React.FC = () => {
 
   const { status: syncStatus, offlineMeta } = useSyncStore();
   const isSyncing = syncStatus === 'loading cache' || syncStatus === 'processing cache data';
+
+  // cluster=false param temporarily overrides the persistent setting
+  const effectiveClusterEnabled = urlClusterDisabled ? false : settings.clusterEnabled;
 
   // 2. Logic Controller (Effects & Complex handlers)
   const {
@@ -74,7 +83,7 @@ const App: React.FC = () => {
         caches={caches}
         userPins={userPins}
         showCircles={settings.showCircles}
-        clusterEnabled={settings.clusterEnabled}
+        clusterEnabled={effectiveClusterEnabled}
         customPinsEnabled={settings.customPinsEnabled}
         onPinAdd={addUserPin}
         onPinDelete={deleteUserPin}
@@ -85,6 +94,7 @@ const App: React.FC = () => {
         onMapMoveEnd={handleMapMoveEnd}
       />
 
+      {!isInIframe && (
       <MapControls 
         mapType={mapType}
         onSetMapType={setMapType}
@@ -99,6 +109,7 @@ const App: React.FC = () => {
         onToggleExplore={handleToggleExplore}
         isSyncing={isSyncing}
       />
+      )}
 
       <AppDrawer 
         isOpen={drawerOpen}

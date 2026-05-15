@@ -4,10 +4,11 @@ import { Geocache } from '../../types';
  * Estimate an appropriate map zoom level based on the bounding box
  * of a set of geocaches.
  *
- * The approach maps the larger of latSpan / lngSpan to a zoom level so that
- * all points fit comfortably inside a typical viewport.
+ * Design rule:
+ *   - Clustered markers (small spread)  → zoom ≥ 14
+ *   - Dispersed markers (large spread)  → zoom < 14
  *
- * @param caches  - Array of caches (must have .latitude / .longitude)
+ * @param caches   - Array of caches (must have .latitude / .longitude)
  * @param fallback - Zoom level to use when only one point is present (default 16)
  */
 export function zoomForCaches(caches: Geocache[], fallback = 16): number {
@@ -20,16 +21,20 @@ export function zoomForCaches(caches: Geocache[], fallback = 16): number {
   const lngSpan = Math.max(...lngs) - Math.min(...lngs);
   const span = Math.max(latSpan, lngSpan);
 
-  // Empirically tuned thresholds (degrees → zoom)
-  if (span < 0.01)  return 15;
-  if (span < 0.05)  return 12;
-  if (span < 0.15)  return 11;
-  if (span < 0.5)   return 10;
-  if (span < 1.5)   return 9;
-  if (span < 4)     return 8;
-  if (span < 10)    return 7;
-  if (span < 25)    return 6;
-  if (span < 50)    return 5;
+  // span (degrees) → zoom  [clustered = ≥14, dispersed = <14]
+  if (span < 0.003) return 17;   // ~300 m  — very tight cluster
+  if (span < 0.008) return 16;   // ~800 m
+  if (span < 0.02)  return 15;   // ~2 km
+  if (span < 0.06)  return 14;   // ~6 km  ← boundary
+  if (span < 0.15)  return 13;   // ~15 km
+  if (span < 0.4)   return 12;
+  if (span < 1.0)   return 11;
+  if (span < 2.5)   return 10;
+  if (span < 5)     return 9;
+  if (span < 12)    return 8;
+  if (span < 25)    return 7;
+  if (span < 50)    return 6;
+  if (span < 100)   return 5;
   return 4;
 }
 
