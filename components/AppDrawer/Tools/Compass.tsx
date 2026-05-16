@@ -22,6 +22,34 @@ function shortestAngleDelta(from: number, to: number) {
   return d;
 }
 
+// 坐标格式化
+type CoordMode = 'DMM' | 'DD' | 'DMS';
+const COORD_MODES: CoordMode[] = ['DMM', 'DD', 'DMS'];
+
+function toDMM(v: number, isLat: boolean) {
+  const dir = isLat ? (v >= 0 ? 'N' : 'S') : (v >= 0 ? 'E' : 'W');
+  const abs = Math.abs(v);
+  const deg = Math.floor(abs);
+  const min = ((abs - deg) * 60).toFixed(4);
+  return `${dir} ${deg}° ${min}'`;
+}
+
+function toDMS(v: number, isLat: boolean) {
+  const dir = isLat ? (v >= 0 ? 'N' : 'S') : (v >= 0 ? 'E' : 'W');
+  const abs = Math.abs(v);
+  const deg = Math.floor(abs);
+  const minFull = (abs - deg) * 60;
+  const min = Math.floor(minFull);
+  const sec = ((minFull - min) * 60).toFixed(1);
+  return `${dir} ${deg}° ${min}' ${sec}"`;
+}
+
+function formatCoord(lat: number, lng: number, mode: CoordMode): string {
+  if (mode === 'DD') return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  if (mode === 'DMM') return `${toDMM(lat, true)}  ${toDMM(lng, false)}`;
+  return `${toDMS(lat, true)}  ${toDMS(lng, false)}`;
+}
+
 const Compass = NiceModal.create(() => {
   const modal = useModal();
   const [state, setState] = useState<CompassState>({
@@ -115,13 +143,17 @@ const Compass = NiceModal.create(() => {
   // 模式：true=转罗盘（表盘转，指针朝上），false=转指针（表盘固定，指针跟转）
   const [rotateCompass, setRotateCompass] = useState(true);
 
+  // 坐标格式模式（点击循环切换）
+  const [coordMode, setCoordMode] = useState<CoordMode>('DMM');
+  const cycleCoordMode = () =>
+    setCoordMode(m => COORD_MODES[(COORD_MODES.indexOf(m) + 1) % COORD_MODES.length]);
+
   // 复制坐标
   const [copied, setCopied] = useState(false);
   const handleCopyCoords = () => {
     const { lat, lng } = state;
     if (lat == null || lng == null) return;
-    const text = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(formatCoord(lat, lng, coordMode)).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     });
@@ -224,18 +256,31 @@ const Compass = NiceModal.create(() => {
       </div>
 
       {/* GPS 坐标 */}
-      <div
-        className={`w-full bg-slate-50 rounded-xl border-2 border-memphis-dark px-4 py-3 text-center ${lat != null && lng != null ? 'cursor-pointer active:bg-slate-100' : ''}`}
-        onClick={handleCopyCoords}
-        title="点击复制坐标"
-      >
+      <div className="w-full bg-slate-50 rounded-xl border-2 border-memphis-dark px-4 py-3">
         {lat != null && lng != null ? (
           <>
-            <div className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">
-              {copied ? '✅ 已复制' : 'GPS 坐标'}
+            {/* 标签行：格式名（可点击切换）+ 复制按钮 */}
+            <div className="flex items-center justify-between mb-1">
+              <button
+                onClick={cycleCoordMode}
+                className="text-xs font-black text-slate-400 uppercase tracking-wider hover:text-memphis-dark transition-colors flex items-center gap-1"
+                title="点击切换坐标格式"
+              >
+                {coordMode} <span className="text-[10px] text-slate-300">▸</span>
+              </button>
+              <button
+                onClick={handleCopyCoords}
+                className={`text-[11px] font-black px-2 py-0.5 rounded-lg border transition-all ${
+                  copied
+                    ? 'bg-green-100 border-green-300 text-green-600'
+                    : 'border-slate-200 text-slate-400 hover:bg-memphis-yellow hover:border-memphis-dark hover:text-slate-800'
+                }`}
+              >
+                {copied ? '✅ 已复制' : '复制'}
+              </button>
             </div>
             <div className="font-mono text-sm font-bold text-slate-800 break-all">
-              {lat.toFixed(6)}, {lng.toFixed(6)}
+              {formatCoord(lat, lng, coordMode)}
             </div>
             {gpsAccuracy != null && (
               <div className="text-xs text-slate-400 mt-1">精度 ±{gpsAccuracy.toFixed(0)} m</div>
