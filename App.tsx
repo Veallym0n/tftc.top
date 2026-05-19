@@ -10,6 +10,7 @@ import { useSyncStore } from './stores/useSyncStore';
 import { useAppController } from './hooks/useAppController';
 import { eventService } from './services/eventService';
 import CacheManagerModal from './components/AppDrawer/Modals/CacheManagerModal';
+import { useIOSInputScrollLock } from './hooks/useIOSInputScrollLock';
 
 // Detect if running inside an iframe (once, outside component)
 const isInIframe = window.self !== window.top;
@@ -18,6 +19,9 @@ const isInIframe = window.self !== window.top;
 const urlClusterDisabled = new URLSearchParams(window.location.search).get('cluster') === 'false';
 
 const App: React.FC = () => {
+  // 修复 iOS Safari 输入法弹起时的滚动错位问题
+  useIOSInputScrollLock();
+
   // 1. Global State from Zustand
   const { 
       caches, userPins, gpxFiles, mapType, settings, 
