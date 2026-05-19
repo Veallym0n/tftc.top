@@ -30,8 +30,8 @@ function toDMM(v: number, isLat: boolean) {
   const dir = isLat ? (v >= 0 ? 'N' : 'S') : (v >= 0 ? 'E' : 'W');
   const abs = Math.abs(v);
   const deg = Math.floor(abs);
-  const min = ((abs - deg) * 60).toFixed(4);
-  return `${dir} ${deg}° ${min}'`;
+  const min = ((abs - deg) * 60).toFixed(4).padStart(8, '0');
+  return `${dir}${deg}° ${min}'`;
 }
 
 function toDMS(v: number, isLat: boolean) {
@@ -41,7 +41,7 @@ function toDMS(v: number, isLat: boolean) {
   const minFull = (abs - deg) * 60;
   const min = Math.floor(minFull);
   const sec = ((minFull - min) * 60).toFixed(1);
-  return `${dir} ${deg}° ${min}' ${sec}"`;
+  return `${dir}${deg}° ${min}' ${sec}"`;
 }
 
 function formatCoord(lat: number, lng: number, mode: CoordMode): string {
