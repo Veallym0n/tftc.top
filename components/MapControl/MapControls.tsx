@@ -35,7 +35,7 @@ const MapControls: React.FC<MapControlsProps> = ({
   isSyncing
 }) => {
   return (
-    <div className="absolute top-5 left-3 flex flex-col gap-3 pointer-events-auto z-float">
+    <div className="absolute top-14 left-3 flex flex-col gap-3 pointer-events-auto z-float">
       {/* Menu Button */}
       <button 
         onClick={onOpenDrawer} 
