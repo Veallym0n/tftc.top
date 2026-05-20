@@ -32,7 +32,7 @@ export interface StoredGpx {
   caches: Geocache[];
 }
 
-export type MapType = 'gaode' | 'tencent' | 'osm' | 'satellite';
+export type MapType = 'gaode' | 'tencent' | 'osm' | 'satellite' | 'googlesat' | 'googlemap';
 
 export interface MapLayerConfig {
   name: string;

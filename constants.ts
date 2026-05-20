@@ -75,6 +75,18 @@ export const MAP_LAYERS: Record<MapType, MapLayerConfig> = {
     name: '卫星 (Esri)',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     std: 'wgs84'
+  },
+  googlesat: {
+    name: 'Google卫星',
+    url: 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+    subdomains: ['0', '1', '2', '3'],
+    std: 'wgs84'
+  },
+  googlemap: {
+    name: 'Google地图',
+    url: 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+    subdomains: ['0', '1', '2', '3'],
+    std: 'gcj02'
   }
 };
 
