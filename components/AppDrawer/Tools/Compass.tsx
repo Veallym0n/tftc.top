@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Modal, defaultModalClasses } from '../../../libs/common/Modal';
+import { useMapStore } from '../../../stores/useMapStore';
 
 interface CompassState {
   lat: number | null;
@@ -159,6 +160,17 @@ const Compass = NiceModal.create(() => {
     });
   };
 
+  // 放置 Pin
+  const { addTempPin } = useMapStore();
+  const [pinDropped, setPinDropped] = useState(false);
+  const handleDropPin = () => {
+    const { lat, lng } = state;
+    if (lat == null || lng == null) return;
+    addTempPin(lat, lng, '📍 当前位置');
+    setPinDropped(true);
+    setTimeout(() => setPinDropped(false), 1500);
+  };
+
   const { lat, lng, gpsAccuracy, error, permissionDenied } = state;
   const heading = displayHeading;
   // 转罗盘：表盘逆向旋转，指针固定；转指针：表盘固定，指针顺向旋转
@@ -285,6 +297,16 @@ const Compass = NiceModal.create(() => {
             {gpsAccuracy != null && (
               <div className="text-xs text-slate-400 mt-1">精度 ±{gpsAccuracy.toFixed(0)} m</div>
             )}
+            <button
+              onClick={handleDropPin}
+              className={`mt-2 w-full py-1.5 rounded-lg border-2 text-xs font-black transition-all ${
+                pinDropped
+                  ? 'bg-memphis-green border-memphis-green text-white'
+                  : 'border-memphis-dark text-memphis-dark hover:bg-memphis-yellow active:scale-95'
+              }`}
+            >
+              {pinDropped ? '✅ 已放置' : '📍 在此放置 Pin'}
+            </button>
           </>
         ) : error ? (
           <p className="text-xs text-red-400">{error}</p>
