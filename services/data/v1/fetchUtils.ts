@@ -45,9 +45,10 @@ export function processStandardResponse(data: any): any[] {
     if (Array.isArray(data)) {
         return data
           .filter((d: any) =>
-            // Support both flat { latitude, longitude } and nested { postedCoordinates: { latitude, longitude } }
-            (d.latitude && d.longitude) ||
-            (d.postedCoordinates?.latitude && d.postedCoordinates?.longitude)
+            // Allow latitude/longitude of 0 (premium-only caches have 0,0 coords that
+            // will be patched later); only exclude items with missing/null coords.
+            (d.latitude != null && d.longitude != null) ||
+            (d.postedCoordinates?.latitude != null && d.postedCoordinates?.longitude != null)
           )
           .map((d: any) => {
             const lat = d.latitude ?? d.postedCoordinates?.latitude;

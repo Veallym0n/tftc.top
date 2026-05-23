@@ -20,9 +20,39 @@ import { ByAllEventData } from './data/v2/ByAllEventData';
 
 const STORAGE_KEY_LAST_DL = 'last_daily_sync';
 const H3_RESOLUTION = 9;
+const COORD_PATCH_URL = 'https://kevinaudio.bjcnc.scs.sohucs.com/gc_premiumOnly.json';
+
+type CoordPatch = Record<string, { latitude?: number; longitude?: number; display?: boolean }>;
 
 class CacheService {
   private strategies: Map<string, IDataSource> = new Map();
+  /** Cached coordinate patch, loaded once per session */
+  private coordPatch: CoordPatch | null = null;
+  private coordPatchPromise: Promise<CoordPatch> | null = null;
+
+  /** Fetch (or return cached) coordinate patch */
+  async getCoordPatch(): Promise<CoordPatch> {
+    if (this.coordPatch) return this.coordPatch;
+    if (!this.coordPatchPromise) {
+      this.coordPatchPromise = fetch(COORD_PATCH_URL)
+        .then(res => res.ok ? res.json() as Promise<CoordPatch> : ({} as CoordPatch))
+        .catch(e => { console.warn('Coord patch fetch failed:', e); return {} as CoordPatch; })
+        .then(patch => { this.coordPatch = patch; return patch; });
+    }
+    return this.coordPatchPromise;
+  }
+
+  /** Apply coordinate patch to a list of caches (mutates latitude/longitude in-place) */
+  applyPatch(caches: Geocache[], patch: CoordPatch): Geocache[] {
+    if (!patch || Object.keys(patch).length === 0) return caches;
+    return caches
+      .filter(c => patch[c.code]?.display !== false)
+      .map(c => {
+        const p = patch[c.code];
+        if (!p || p.latitude == null || p.longitude == null) return c;
+        return { ...c, latitude: p.latitude, longitude: p.longitude };
+      });
+  }
 
   constructor() {
     this.register(new ByPublishedData());
@@ -45,7 +75,9 @@ class CacheService {
     if (!strategy) {
       throw new Error(`No data strategy found for type: ${type}`);
     }
-    return await strategy.fetch();
+    const caches = await strategy.fetch();
+    const patch = await this.getCoordPatch();
+    return this.applyPatch(caches, patch);
   }
 
   /**
@@ -186,16 +218,28 @@ class CacheService {
             throw new Error('Could not download cache data (tried current and previous hour).');
         }
 
-        // 2. Process Data (Clean & H3)
+        // 2. Load coordinate patch (best-effort, non-blocking)
+        const coordPatch = await this.getCoordPatch();
+
+        // 3. Process Data (Clean & H3)
         notifyStatus('processing cache data');
         
         const validCaches: Geocache[] = [];
         const h3Index: Record<string, string[]> = {};
         
         for (const item of rawData) {
-            if (item.latitude && item.longitude) {
-                const lat = Number(item.latitude);
-                const lng = Number(item.longitude);
+            if (item.latitude != null && item.longitude != null) {
+                // Apply coordinate patch if available
+                const patch = coordPatch[item.code];
+
+                // Hidden by patch — skip entirely
+                if (patch?.display === false) continue;
+
+                const lat = (patch?.latitude != null) ? patch.latitude : Number(item.latitude);
+                const lng = (patch?.longitude != null) ? patch.longitude : Number(item.longitude);
+
+                // Skip items that still have no valid coordinates after patching
+                if (lat === 0 && lng === 0) continue;
                 
                 // Calculate H3 locally
                 const h3Res9 = latLngToCell(lat, lng, H3_RESOLUTION);
