@@ -36,6 +36,7 @@ Three layers:
 ## Custom integrations with Filter Sphere
 
 - **Theming** — `theme/index.tsx` builds a `filterSphereTheme` via `createFilterTheme`, supplying app-styled `button` / `input` / `select` / `option` primitives.
+- **Flatten layout** — `theme/templates.tsx` overrides the `SingleFilter`, `FilterGroupContainer`, and `RuleJoiner` templates so every rule renders as a single row with inline `And` / `Or` / `✕` controls (no nested group chrome). The initial rule tree comes from `createFlattenFilterGroup` in `defaultRule.ts`, passed to `useFilterSphere` as `defaultRule`.
 - **Custom input widget** — Difficulty/Terrain are tagged in the schema with `meta.filterInput = CACHE_RATING_FILTER_INPUT`. The `cacheRatingInputView` (a `DataInputViewSpec`) matches that marker and renders a half-star rating control instead of the default number input.
 - **Localization** — `locale.ts` layers app-specific strings on top of the library's built-in `enUS` / `zhCN` locales and feeds them to `useFilterSphere` via `getLocaleText`.
 

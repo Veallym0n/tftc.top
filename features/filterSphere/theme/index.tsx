@@ -6,6 +6,7 @@ import {
   SelectHTMLAttributes,
 } from 'react';
 import { cacheRatingInputView } from './RatingInput';
+import { flattenTemplates } from './templates';
 
 const cx = (...values: Array<string | undefined>) => {
   return values.filter(Boolean).join(' ');
@@ -73,4 +74,5 @@ export const filterSphereTheme = createFilterTheme({
     select: SelectPrimitive,
     option: OptionPrimitive,
   },
+  templates: flattenTemplates,
 });

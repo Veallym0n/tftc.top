@@ -4,6 +4,7 @@ import { useFilterSphere } from '@fn-sphere/filter';
 import { Modal } from '../../../libs/common/Modal';
 import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useMapStore } from '../../../stores/useMapStore';
+import { createFlattenFilterGroup } from '../defaultRule';
 import { getFilterModalText, getFilterSphereLocaleText } from '../locale';
 import { normalizeOfflineCache } from '../normalize';
 import { filterFnList, offlineCacheFilterSchema } from '../schema';
@@ -34,6 +35,7 @@ const FilterLabModal = NiceModal.create(() => {
       filterFnList,
       getLocaleText: localeText,
       ruleValue,
+      defaultRule: createFlattenFilterGroup,
       onRuleChange: ({ filterRule }) => {
         setRuleValue(filterRule);
       },
