@@ -93,6 +93,8 @@ const modalTextByLanguage = {
     matched: 'Matched',
     rules: 'Valid rules',
     previewTitle: 'Preview',
+    tabBuilder: 'Builder',
+    tabPreview: 'Preview',
     previewSummary:
       '{matched} matched from {total} offline caches · {valid}/{rules} valid rules',
     previewEmpty: 'No caches match the current rules.',
@@ -112,6 +114,8 @@ const modalTextByLanguage = {
     matched: '匹配结果',
     rules: '有效规则',
     previewTitle: '结果预览',
+    tabBuilder: '规则',
+    tabPreview: '预览',
     previewSummary: '当前匹配 {matched} / {total} 个离线藏点 · 有效规则 {valid}/{rules}',
     previewEmpty: '当前规则没有匹配到任何藏点。',
     reset: '重置规则',
