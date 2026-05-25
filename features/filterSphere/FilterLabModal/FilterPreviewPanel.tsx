@@ -93,13 +93,15 @@ export const FilterPreviewPanel = ({
         </div>
       </div>
 
-      <FilterModalActions
-        text={text}
-        isApplyDisabled={filteredRecords.length === 0}
-        onReset={onReset}
-        onClose={onClose}
-        onApply={onApply}
-      />
+      <div className="hidden lg:block">
+        <FilterModalActions
+          text={text}
+          isApplyDisabled={filteredRecords.length === 0}
+          onReset={onReset}
+          onClose={onClose}
+          onApply={onApply}
+        />
+      </div>
     </aside>
   );
 };
