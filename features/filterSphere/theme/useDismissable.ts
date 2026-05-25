@@ -1,22 +1,24 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Closes an open popover on `Escape` and on pointer interactions outside the
- * container. Attach the returned ref to the element that wraps BOTH the trigger
- * and the menu so clicks on either are treated as "inside".
+ * Calls `onDismiss` on `Escape` and on pointer interactions outside every
+ * element in `refs`. Pass refs for all elements that count as "inside": with a
+ * portaled menu the trigger and the menu live in different DOM subtrees, so both
+ * must be listed or selecting an option would be read as an outside click.
  *
- * Listeners are attached in the capture phase: while the menu is open, `Escape`
- * is consumed here (stopPropagation) so the surrounding modal does not also
- * close. The latest `onDismiss` is read through a ref so listeners subscribe
- * once per open/close cycle rather than on every render.
+ * Listeners use the capture phase so an open menu consumes `Escape` before the
+ * surrounding modal does. The latest values are read through refs so the
+ * listeners subscribe once per open/close cycle rather than on every render.
  */
-export const useDismissable = <T extends HTMLElement>(
+export const useDismissable = (
   open: boolean,
   onDismiss: () => void,
+  refs: ReadonlyArray<{ readonly current: Element | null }>,
 ) => {
-  const containerRef = useRef<T>(null);
   const onDismissRef = useRef(onDismiss);
   onDismissRef.current = onDismiss;
+  const refsRef = useRef(refs);
+  refsRef.current = refs;
 
   useEffect(() => {
     if (!open) {
@@ -24,8 +26,11 @@ export const useDismissable = <T extends HTMLElement>(
     }
 
     const handlePointerDown = (event: PointerEvent) => {
-      const container = containerRef.current;
-      if (container && !container.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInside = refsRef.current.some(
+        (ref) => ref.current?.contains(target) ?? false,
+      );
+      if (!isInside) {
         onDismissRef.current();
       }
     };
@@ -44,6 +49,4 @@ export const useDismissable = <T extends HTMLElement>(
       document.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [open]);
-
-  return containerRef;
 };

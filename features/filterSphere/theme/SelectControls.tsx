@@ -1,5 +1,6 @@
-import { useState, type ReactNode, type SelectHTMLAttributes } from 'react';
-import { useDismissable } from './useDismissable';
+import { type CSSProperties, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { createPortal } from 'react-dom';
+import { usePopover, type PopoverPosition } from './usePopover';
 
 const cx = (...values: Array<string | false | undefined>) => {
   return values.filter(Boolean).join(' ');
@@ -32,8 +33,10 @@ type MultiSelectProps<T> = Omit<
 const triggerClassName =
   'inline-flex min-h-10 min-w-[10rem] items-center justify-between rounded-xl border-2 border-memphis-dark bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none transition-all hover:bg-memphis-yellow focus:ring-4 focus:ring-memphis-blue/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400';
 
+// Portaled to <body>, so it sits above the modal (z-[2000]) and is not clipped
+// by the modal's overflow-auto scroll containers. Position comes from usePopover.
 const menuClassName =
-  'absolute left-0 top-[calc(100%+0.375rem)] z-50 max-h-60 min-w-full overflow-auto rounded-xl border-2 border-memphis-dark bg-white p-1 shadow-memphis';
+  'z-[2100] max-h-60 overflow-auto rounded-xl border-2 border-memphis-dark bg-white p-1 shadow-memphis';
 
 const optionClassName =
   'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-800 transition-colors hover:bg-memphis-blue/10';
@@ -43,6 +46,13 @@ const optionSelectedClassName = 'bg-memphis-blue/15 font-bold';
 const checkboxClassName =
   'inline-flex h-4 w-4 flex-none items-center justify-center rounded border-2 border-memphis-dark text-[0.65rem] font-black leading-none';
 
+const menuStyle = (position: PopoverPosition): CSSProperties => ({
+  position: 'fixed',
+  top: position.top,
+  left: position.left,
+  minWidth: position.minWidth,
+});
+
 export const SingleSelect = <T,>({
   value,
   options = [],
@@ -50,10 +60,7 @@ export const SingleSelect = <T,>({
   disabled,
   className,
 }: SingleSelectProps<T>): ReactNode => {
-  const [open, setOpen] = useState(false);
-  const containerRef = useDismissable<HTMLDivElement>(open, () =>
-    setOpen(false),
-  );
+  const { open, setOpen, position, triggerRef, menuRef } = usePopover();
 
   // Map by array position via strict-equality lookup; never stringify values
   // (they may be FilterField / fn-schema objects compared by reference).
@@ -67,7 +74,7 @@ export const SingleSelect = <T,>({
   };
 
   return (
-    <div ref={containerRef} className={cx('relative inline-block', className)}>
+    <div ref={triggerRef} className={cx('inline-block', className)}>
       <button
         type="button"
         disabled={disabled}
@@ -84,27 +91,36 @@ export const SingleSelect = <T,>({
         </span>
       </button>
 
-      {open && !disabled && (
-        <ul role="listbox" className={menuClassName}>
-          {options.map((option, index) => {
-            const isSelected = index === selectedIndex;
-            return (
-              <li key={index} role="option" aria-selected={isSelected}>
-                <button
-                  type="button"
-                  onClick={() => handleSelect(option)}
-                  className={cx(
-                    optionClassName,
-                    isSelected && optionSelectedClassName,
-                  )}
-                >
-                  <span className="truncate">{option.label}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {open &&
+        !disabled &&
+        position &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            role="listbox"
+            className={menuClassName}
+            style={menuStyle(position)}
+          >
+            {options.map((option, index) => {
+              const isSelected = index === selectedIndex;
+              return (
+                <li key={index} role="option" aria-selected={isSelected}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(option)}
+                    className={cx(
+                      optionClassName,
+                      isSelected && optionSelectedClassName,
+                    )}
+                  >
+                    <span className="truncate">{option.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 };
@@ -116,10 +132,7 @@ export const MultiSelect = <T,>({
   disabled,
   className,
 }: MultiSelectProps<T>): ReactNode => {
-  const [open, setOpen] = useState(false);
-  const containerRef = useDismissable<HTMLDivElement>(open, () =>
-    setOpen(false),
-  );
+  const { open, setOpen, position, triggerRef, menuRef } = usePopover();
 
   const isSelected = (option: SelectOption<T>) =>
     value.some((selected) => selected === option.value);
@@ -132,7 +145,7 @@ export const MultiSelect = <T,>({
   };
 
   return (
-    <div ref={containerRef} className={cx('relative inline-block', className)}>
+    <div ref={triggerRef} className={cx('inline-block', className)}>
       <button
         type="button"
         disabled={disabled}
@@ -149,30 +162,40 @@ export const MultiSelect = <T,>({
         </span>
       </button>
 
-      {open && !disabled && (
-        <ul role="listbox" aria-multiselectable className={menuClassName}>
-          {options.map((option, index) => {
-            const checked = isSelected(option);
-            return (
-              <li key={index} role="option" aria-selected={checked}>
-                <button
-                  type="button"
-                  onClick={() => toggle(option)}
-                  className={cx(
-                    optionClassName,
-                    checked && optionSelectedClassName,
-                  )}
-                >
-                  <span className={checkboxClassName} aria-hidden>
-                    {checked ? '✓' : ''}
-                  </span>
-                  <span className="truncate">{option.label}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {open &&
+        !disabled &&
+        position &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            role="listbox"
+            aria-multiselectable
+            className={menuClassName}
+            style={menuStyle(position)}
+          >
+            {options.map((option, index) => {
+              const checked = isSelected(option);
+              return (
+                <li key={index} role="option" aria-selected={checked}>
+                  <button
+                    type="button"
+                    onClick={() => toggle(option)}
+                    className={cx(
+                      optionClassName,
+                      checked && optionSelectedClassName,
+                    )}
+                  >
+                    <span className={checkboxClassName} aria-hidden>
+                      {checked ? '✓' : ''}
+                    </span>
+                    <span className="truncate">{option.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 };
