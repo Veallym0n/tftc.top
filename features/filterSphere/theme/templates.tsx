@@ -23,7 +23,7 @@ const SingleFilterTemplate: Templates['SingleFilter'] = ({ rule }) => {
   const isLastRuleInGroup = isLastRule && lastCondition?.id === parentGroup.id;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="filter-rule flex flex-wrap items-center gap-2">
       <FieldSelect rule={rule} />
       <FilterSelect rule={rule} />
       <FilterDataInput rule={rule} />
@@ -68,7 +68,7 @@ const SingleFilterTemplate: Templates['SingleFilter'] = ({ rule }) => {
 const FilterGroupContainerTemplate: Templates['FilterGroupContainer'] = ({
   children,
 }) => {
-  return <div className="flex flex-col items-start">{children}</div>;
+  return <div className="flex flex-col">{children}</div>;
 };
 
 const RuleJoinerTemplate: Templates['RuleJoiner'] = ({
@@ -84,7 +84,7 @@ const RuleJoinerTemplate: Templates['RuleJoiner'] = ({
 
   if (before.type === 'Filter' && after.type === 'Filter') {
     return (
-      <div className="flex flex-col items-center justify-center">
+      <div className="filter-and-connector flex w-fit flex-col items-center justify-center">
         <div className="h-3 w-0.5 rounded-md bg-memphis-dark/30" />
         <ButtonView disabled>{label}</ButtonView>
         <div className="h-3 w-0.5 rounded-md bg-memphis-dark/30" />
@@ -92,9 +92,9 @@ const RuleJoinerTemplate: Templates['RuleJoiner'] = ({
     );
   }
   return (
-    <ButtonView disabled className="my-4">
-      {label}
-    </ButtonView>
+    <div className="filter-or-connector my-3 w-fit">
+      <ButtonView disabled>{label}</ButtonView>
+    </div>
   );
 };
 
