@@ -1,18 +1,14 @@
 import { createFilterTheme } from '@fn-sphere/filter';
-import {
-  ButtonHTMLAttributes,
-  InputHTMLAttributes,
-  OptionHTMLAttributes,
-  SelectHTMLAttributes,
-} from 'react';
+import { ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
 import { cacheRatingInputView } from './RatingInput';
+import { MultiSelect, SingleSelect } from './SelectControls';
 import { flattenTemplates } from './templates';
 
 const cx = (...values: Array<string | undefined>) => {
   return values.filter(Boolean).join(' ');
 };
 
-const ButtonPrimitive = ({
+const AppButton = ({
   className,
   type,
   ...props
@@ -29,13 +25,17 @@ const ButtonPrimitive = ({
   );
 };
 
-const InputPrimitive = ({
+const AppInput = ({
   className,
+  onChange,
   ...props
-}: InputHTMLAttributes<HTMLInputElement>) => {
+}: Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
+  onChange?: (value: string) => void;
+}) => {
   return (
     <input
       {...props}
+      onChange={(event) => onChange?.(event.target.value)}
       className={cx(
         'min-h-10 min-w-[10rem] rounded-xl border-2 border-memphis-dark bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none transition-all focus:ring-4 focus:ring-memphis-pink/20 disabled:bg-slate-100',
         className,
@@ -44,35 +44,13 @@ const InputPrimitive = ({
   );
 };
 
-const SelectPrimitive = ({
-  className,
-  ...props
-}: SelectHTMLAttributes<HTMLSelectElement>) => {
-  return (
-    <select
-      {...props}
-      className={cx(
-        'min-h-10 min-w-[10rem] rounded-xl border-2 border-memphis-dark bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none transition-all focus:ring-4 focus:ring-memphis-blue/20 disabled:bg-slate-100',
-        className,
-      )}
-    />
-  );
-};
-
-const OptionPrimitive = ({
-  className,
-  ...props
-}: OptionHTMLAttributes<HTMLOptionElement>) => {
-  return <option {...props} className={cx('text-slate-800', className)} />;
-};
-
 export const filterSphereTheme = createFilterTheme({
   dataInputViews: [cacheRatingInputView],
-  primitives: {
-    button: ButtonPrimitive,
-    input: InputPrimitive,
-    select: SelectPrimitive,
-    option: OptionPrimitive,
+  components: {
+    Button: AppButton,
+    Input: AppInput,
+    Select: SingleSelect,
+    MultipleSelect: MultiSelect,
   },
   templates: flattenTemplates,
 });
