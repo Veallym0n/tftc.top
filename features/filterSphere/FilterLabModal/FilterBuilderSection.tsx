@@ -50,12 +50,10 @@ export const FilterBuilderSection = ({
         )}
 
         {!isLoading && !errorMessage && offlineCacheCount > 0 && (
-          <div className="overflow-auto pb-4">
-            <div className="min-w-max">
-              <FilterSphereProvider context={context} theme={filterSphereTheme}>
-                <FilterBuilder />
-              </FilterSphereProvider>
-            </div>
+          <div className="filter-builder">
+            <FilterSphereProvider context={context} theme={filterSphereTheme}>
+              <FilterBuilder />
+            </FilterSphereProvider>
           </div>
         )}
       </div>
