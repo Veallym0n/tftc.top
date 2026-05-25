@@ -1,0 +1,31 @@
+/* Container-query styling for the Filter Lab builder. The app's CDN Tailwind has
+   no container-query utilities, so these rules live in plain CSS. The builder
+   wrapper is the query container; descendants respond to the PANEL width. */
+
+.filter-builder {
+  container-type: inline-size;
+}
+
+/* Wide panel (default): plain rows, connectors left-aligned. */
+.filter-and-connector,
+.filter-or-connector {
+  align-self: flex-start;
+}
+
+/* Narrow panel: each rule becomes a card, connectors centered.
+   Threshold ~ where a single row begins to wrap (three min-w-[10rem] controls
+   plus action buttons). Tune in the browser if needed. */
+@container (max-width: 40rem) {
+  .filter-rule {
+    border-radius: 1rem;
+    border: 2px solid rgba(30, 41, 59, 0.2);
+    background-color: #ffffff;
+    padding: 0.75rem;
+    box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.45);
+  }
+
+  .filter-and-connector,
+  .filter-or-connector {
+    align-self: center;
+  }
+}
