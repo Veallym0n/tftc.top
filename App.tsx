@@ -11,6 +11,7 @@ import { useAppController } from './hooks/useAppController';
 import { eventService } from './services/eventService';
 import CacheManagerModal from './components/AppDrawer/Modals/CacheManagerModal';
 import { useIOSInputScrollLock } from './hooks/useIOSInputScrollLock';
+import { useCacheSearch } from './hooks/useCacheSearch';
 
 // Detect if running inside an iframe (once, outside component)
 const isInIframe = window.self !== window.top;
@@ -30,6 +31,9 @@ const App: React.FC = () => {
       addUserPin, deleteUserPin, updateUserPin, toggleSetting, setExploreRadius,
       deleteGpx, setCaches, loadGpxList
   } = useMapStore();
+
+  // 地图实时搜索/过滤
+  const { query, setQuery, isOpen: searchOpen, openSearch, closeSearch, displayCaches, resultCount, isGlobalSearching, runGlobalSearch } = useCacheSearch(caches);
 
   const { status: syncStatus, offlineMeta } = useSyncStore();
   const isSyncing = syncStatus === 'loading cache' || syncStatus === 'processing cache data';
@@ -84,7 +88,7 @@ const App: React.FC = () => {
       
       <TFTCMap 
         mapType={mapType}
-        caches={caches}
+        caches={displayCaches}
         userPins={userPins}
         showCircles={settings.showCircles}
         clusterEnabled={effectiveClusterEnabled}
@@ -112,6 +116,14 @@ const App: React.FC = () => {
         isExploreMode={isExploreMode}
         onToggleExplore={handleToggleExplore}
         isSyncing={isSyncing}
+        isSearchOpen={searchOpen}
+        onToggleSearch={() => searchOpen ? closeSearch() : openSearch()}
+        query={query}
+        onQueryChange={setQuery}
+        onGlobalSearch={runGlobalSearch}
+        isGlobalSearching={isGlobalSearching}
+        resultCount={resultCount}
+        onCloseSearch={closeSearch}
       />
       )}
 

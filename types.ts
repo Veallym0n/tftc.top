@@ -77,4 +77,5 @@ export interface AppEventMap {
   'CACHE_SELECTED': Geocache;
   'EXPLORE_TOGGLED': boolean;
   'DATA_REFRESHED': void;
+  'OPEN_SEARCH': void;
 }

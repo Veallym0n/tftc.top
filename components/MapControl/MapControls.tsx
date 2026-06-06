@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { MapType } from '../../types';
 import { MAP_LAYERS } from '../../constants';
-import { IconMenu, IconLayers, IconLocate, IconExplore } from '../Icons';
+import { IconMenu, IconLayers, IconLocate, IconExplore, IconSearch } from '../Icons';
 
 interface MapControlsProps {
   mapType: MapType;
@@ -18,6 +18,15 @@ interface MapControlsProps {
   isExploreMode: boolean;
   onToggleExplore: () => void;
   isSyncing: boolean;
+  // Search
+  isSearchOpen: boolean;
+  onToggleSearch: () => void;
+  query: string;
+  onQueryChange: (q: string) => void;
+  onGlobalSearch: () => void;
+  isGlobalSearching: boolean;
+  resultCount: number | null;
+  onCloseSearch: () => void;
 }
 
 const MapControls: React.FC<MapControlsProps> = ({
@@ -32,8 +41,21 @@ const MapControls: React.FC<MapControlsProps> = ({
   showExplore,
   isExploreMode,
   onToggleExplore,
-  isSyncing
+  isSyncing,
+  isSearchOpen,
+  onToggleSearch,
+  query,
+  onQueryChange,
+  onGlobalSearch,
+  isGlobalSearching,
+  resultCount,
+  onCloseSearch,
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isSearchOpen) setTimeout(() => inputRef.current?.focus(), 50);
+  }, [isSearchOpen]);
   return (
     <div className="absolute top-14 left-3 flex flex-col gap-3 pointer-events-auto z-float">
       {/* Menu Button */}
@@ -104,6 +126,70 @@ const MapControls: React.FC<MapControlsProps> = ({
             </div>
           </button>
       )}
+
+      {/* Search Button + inline search bar */}
+      <div className="relative flex items-center gap-2">
+        <button
+          onClick={onToggleSearch}
+          className={`w-10 h-10 border-2 border-memphis-dark rounded-xl shadow-memphis flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-memphis-lg active:translate-y-0.5 active:translate-x-0.5 active:shadow-memphis-sm ${(isSearchOpen || query.trim().length > 0) ? 'bg-memphis-pink text-white' : 'bg-white text-slate-700'}`}
+          aria-label="Search"
+        >
+          <IconSearch />
+        </button>
+
+        {/* Inline search bar — slides in to the right */}
+        {isSearchOpen && (
+          <div className="flex items-center gap-1.5 bg-white border-2 border-memphis-dark rounded-xl shadow-memphis px-2.5 py-1.5 animate-fade-in">
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={e => onQueryChange(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onGlobalSearch()}
+              placeholder="GC码 / 名称 / 作者"
+              className="w-44 text-sm font-bold text-slate-800 bg-transparent outline-none placeholder:text-slate-400 placeholder:font-normal"
+            />
+            {resultCount != null && (
+              <span className="text-xs font-black text-memphis-dark bg-memphis-yellow px-1.5 py-0.5 rounded-lg border-2 border-memphis-dark shrink-0">
+                {resultCount}
+              </span>
+            )}
+            {query && (
+              <button
+                onClick={() => onQueryChange('')}
+                className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+            <button
+              onClick={onGlobalSearch}
+              disabled={!query.trim() || isGlobalSearching}
+              title="搜索全部离线数据"
+              className={`shrink-0 w-6 h-6 flex items-center justify-center rounded-lg border-2 transition-colors ${
+                isGlobalSearching
+                  ? 'border-memphis-dark bg-memphis-dark text-white cursor-wait'
+                  : query.trim()
+                  ? 'border-memphis-dark bg-memphis-blue text-white hover:bg-sky-400'
+                  : 'border-slate-200 bg-slate-100 text-slate-300 cursor-not-allowed'
+              }`}
+            >
+              {isGlobalSearching ? (
+                <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
+                </svg>
+              ) : (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 7h16M4 12h10M4 17h7" />
+                </svg>
+              )}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
