@@ -9,14 +9,12 @@ import { getFilterModalText, getFilterSphereLocaleText } from '../locale';
 import { normalizeOfflineCache } from '../normalize';
 import { filterFnList, offlineCacheFilterSchema } from '../schema';
 import { useOfflineFilterRuleStore } from '../useOfflineFilterRuleStore';
+import { cx } from '../classNames';
 import { FilterBuilderSection } from './FilterBuilderSection';
 import { FilterModalActions } from './FilterModalActions';
 import { FilterPreviewPanel } from './FilterPreviewPanel';
 import { modalClasses } from './constants';
 import { useOfflineCaches } from './useOfflineCaches';
-
-const cx = (...values: Array<string | false | undefined>) =>
-  values.filter(Boolean).join(' ');
 
 const FilterLabModal = NiceModal.create(() => {
   const modal = useModal();

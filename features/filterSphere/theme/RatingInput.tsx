@@ -2,14 +2,11 @@ import { useRef, useState, type KeyboardEvent } from 'react';
 import { type DataInputViewSpec } from '@fn-sphere/filter';
 import { z } from 'zod';
 import { type $ZodTuple, type $ZodType, type $ZodTypes } from 'zod/v4/core';
+import { cx } from '../classNames';
 import { CACHE_RATING_FILTER_INPUT } from '../schema';
 
 const RATING_VALUES = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5] as const;
 const STAR_VALUES = [1, 2, 3, 4, 5] as const;
-
-const cx = (...values: Array<string | false | undefined>) => {
-  return values.filter(Boolean).join(' ');
-};
 
 const toRatingValue = (value: unknown) => {
   if (typeof value !== 'number') {

@@ -1,12 +1,9 @@
 import { createFilterTheme } from '@fn-sphere/filter';
 import { ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
+import { cx } from '../classNames';
 import { cacheRatingInputView } from './RatingInput';
 import { MultiSelect, SingleSelect } from './SelectControls';
 import { flattenTemplates } from './templates';
-
-const cx = (...values: Array<string | undefined>) => {
-  return values.filter(Boolean).join(' ');
-};
 
 const AppButton = ({
   className,

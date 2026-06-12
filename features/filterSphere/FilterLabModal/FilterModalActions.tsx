@@ -1,4 +1,5 @@
 import { getFilterModalText } from '../locale';
+import { cx } from '../classNames';
 
 type FilterModalText = ReturnType<typeof getFilterModalText>;
 
@@ -10,9 +11,6 @@ interface FilterModalActionsProps {
   onClose: () => void;
   onApply: () => void;
 }
-
-const cx = (...values: Array<string | false | undefined>) =>
-  values.filter(Boolean).join(' ');
 
 export const FilterModalActions = ({
   text,

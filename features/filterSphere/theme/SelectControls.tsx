@@ -1,10 +1,7 @@
 import { type CSSProperties, type ReactNode, type SelectHTMLAttributes } from 'react';
 import { createPortal } from 'react-dom';
+import { cx } from '../classNames';
 import { usePopover, type PopoverPosition } from './usePopover';
-
-const cx = (...values: Array<string | false | undefined>) => {
-  return values.filter(Boolean).join(' ');
-};
 
 type SelectOption<T> = { value: T; label: string };
 
