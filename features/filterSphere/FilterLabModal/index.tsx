@@ -166,6 +166,7 @@ const FilterLabModal = NiceModal.create(() => {
           <FilterModalActions
             text={text}
             isApplyDisabled={filteredRecords.length === 0}
+            showReset={false}
             onReset={() => reset()}
             onClose={modal.remove}
             onApply={handleApply}

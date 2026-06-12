@@ -1,4 +1,3 @@
-import './filterBuilder.css';
 import { createFilterTheme } from '@fn-sphere/filter';
 import { ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
 import { cacheRatingInputView } from './RatingInput';

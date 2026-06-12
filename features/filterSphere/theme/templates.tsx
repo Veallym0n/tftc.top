@@ -23,7 +23,7 @@ const SingleFilterTemplate: Templates['SingleFilter'] = ({ rule }) => {
   const isLastRuleInGroup = isLastRule && lastCondition?.id === parentGroup.id;
 
   return (
-    <div className="filter-rule flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2 rounded-[0.875rem] border border-memphis-dark/15 bg-white p-3">
       <FieldSelect rule={rule} />
       <FilterSelect rule={rule} />
       <FilterDataInput rule={rule} />
@@ -84,7 +84,7 @@ const RuleJoinerTemplate: Templates['RuleJoiner'] = ({
 
   if (before.type === 'Filter' && after.type === 'Filter') {
     return (
-      <div className="filter-and-connector flex w-fit flex-col items-center justify-center">
+      <div className="flex w-fit flex-col items-center justify-center self-center">
         <div className="h-3 w-0.5 rounded-md bg-memphis-dark/30" />
         <ButtonView disabled>{label}</ButtonView>
         <div className="h-3 w-0.5 rounded-md bg-memphis-dark/30" />
@@ -92,7 +92,7 @@ const RuleJoinerTemplate: Templates['RuleJoiner'] = ({
     );
   }
   return (
-    <div className="filter-or-connector my-3 w-fit">
+    <div className="my-3 w-fit self-center">
       <ButtonView disabled>{label}</ButtonView>
     </div>
   );

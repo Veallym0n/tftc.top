@@ -26,7 +26,7 @@ export const FilterBuilderSection = ({
 }: FilterBuilderSectionProps) => {
   return (
     <section className="flex min-h-0 min-w-0 flex-col border-b-2 border-memphis-dark bg-cream lg:border-b-0 lg:border-r-2">
-      <div className="border-b-2 border-memphis-dark bg-white px-6 py-4">
+      <div className="hidden border-b-2 border-memphis-dark bg-white px-6 py-4 lg:block">
         <div className="text-sm font-bold text-slate-800">{text.subtitle}</div>
       </div>
 
@@ -50,11 +50,9 @@ export const FilterBuilderSection = ({
         )}
 
         {!isLoading && !errorMessage && offlineCacheCount > 0 && (
-          <div className="filter-builder">
-            <FilterSphereProvider context={context} theme={filterSphereTheme}>
-              <FilterBuilder />
-            </FilterSphereProvider>
-          </div>
+          <FilterSphereProvider context={context} theme={filterSphereTheme}>
+            <FilterBuilder />
+          </FilterSphereProvider>
         )}
       </div>
     </section>
