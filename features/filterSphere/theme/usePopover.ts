@@ -20,7 +20,7 @@ export const usePopover = () => {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<PopoverPosition | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const updatePosition = useCallback(() => {
     const trigger = triggerRef.current;

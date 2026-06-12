@@ -35,8 +35,10 @@ const triggerClassName =
 
 // Portaled to <body>, so it sits above the modal (z-[2000]) and is not clipped
 // by the modal's overflow-auto scroll containers. Position comes from usePopover.
-const menuClassName =
-  'z-[2100] max-h-60 overflow-auto rounded-xl border-2 border-memphis-dark bg-white p-1 shadow-memphis';
+const menuFrameClassName =
+  'z-[2100] overflow-hidden rounded-xl border-2 border-memphis-dark bg-white shadow-memphis';
+
+const menuListClassName = 'max-h-60 overflow-auto p-1';
 
 const optionClassName =
   'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-800 transition-colors hover:bg-memphis-blue/10';
@@ -95,30 +97,31 @@ export const SingleSelect = <T,>({
         !disabled &&
         position &&
         createPortal(
-          <ul
+          <div
             ref={menuRef}
-            role="listbox"
-            className={menuClassName}
+            className={menuFrameClassName}
             style={menuStyle(position)}
           >
-            {options.map((option, index) => {
-              const isSelected = index === selectedIndex;
-              return (
-                <li key={index} role="option" aria-selected={isSelected}>
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(option)}
-                    className={cx(
-                      optionClassName,
-                      isSelected && optionSelectedClassName,
-                    )}
-                  >
-                    <span className="truncate">{option.label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>,
+            <ul role="listbox" className={menuListClassName}>
+              {options.map((option, index) => {
+                const isSelected = index === selectedIndex;
+                return (
+                  <li key={index} role="option" aria-selected={isSelected}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelect(option)}
+                      className={cx(
+                        optionClassName,
+                        isSelected && optionSelectedClassName,
+                      )}
+                    >
+                      <span className="truncate">{option.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>,
           document.body,
         )}
     </div>
@@ -166,34 +169,38 @@ export const MultiSelect = <T,>({
         !disabled &&
         position &&
         createPortal(
-          <ul
+          <div
             ref={menuRef}
-            role="listbox"
-            aria-multiselectable
-            className={menuClassName}
+            className={menuFrameClassName}
             style={menuStyle(position)}
           >
-            {options.map((option, index) => {
-              const checked = isSelected(option);
-              return (
-                <li key={index} role="option" aria-selected={checked}>
-                  <button
-                    type="button"
-                    onClick={() => toggle(option)}
-                    className={cx(
-                      optionClassName,
-                      checked && optionSelectedClassName,
-                    )}
-                  >
-                    <span className={checkboxClassName} aria-hidden>
-                      {checked ? '✓' : ''}
-                    </span>
-                    <span className="truncate">{option.label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>,
+            <ul
+              role="listbox"
+              aria-multiselectable
+              className={menuListClassName}
+            >
+              {options.map((option, index) => {
+                const checked = isSelected(option);
+                return (
+                  <li key={index} role="option" aria-selected={checked}>
+                    <button
+                      type="button"
+                      onClick={() => toggle(option)}
+                      className={cx(
+                        optionClassName,
+                        checked && optionSelectedClassName,
+                      )}
+                    >
+                      <span className={checkboxClassName} aria-hidden>
+                        {checked ? '✓' : ''}
+                      </span>
+                      <span className="truncate">{option.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>,
           document.body,
         )}
     </div>
