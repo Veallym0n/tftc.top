@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
+    "coordtransform": "^2.1.2",
     "h3-js": "4.1.0",
+    "idb": "^8.0.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "use-long-press": "3.2.0",

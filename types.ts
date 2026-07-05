@@ -32,7 +32,7 @@ export interface StoredGpx {
   caches: Geocache[];
 }
 
-export type MapType = 'gaode' | 'tencent' | 'osm' | 'satellite' | 'googlesat' | 'googlemap';
+export type MapType = 'gaode' | 'gaodeHQ' | 'tencent' | 'osm' | 'satellite' | 'googlesat' | 'googlemap';
 
 export interface MapLayerConfig {
   name: string;
@@ -45,8 +45,7 @@ export interface MapLayerConfig {
 
 export interface AppConfig {
   version: string;
-  apiBase: string;
-  endpoints: Record<string, string>;
+  cacheFiles: { current: string; newpublish: string };
   links: Array<{ name: string; url: string; icon: string }>;
   cacheTypes: Record<number, { name: string; color: string }>;
   containerTypes: Record<number, string>;
@@ -54,28 +53,5 @@ export interface AppConfig {
   aboutText: string;
 }
 
-// --- Event System Types ---
 
-export interface MapMoveEvent {
-  lat: number;
-  lng: number;
-  zoom: number;
-}
 
-export interface MapFlyToEvent {
-  lat: number;
-  lng: number;
-  code?: string;   // If provided, try to open popup
-  pinId?: number;  // If provided, try to open user pin popup
-  zoom?: number;   // If provided, set map zoom level
-}
-
-export interface AppEventMap {
-  'MAP_DRAG_START': void;
-  'MAP_IDLE': MapMoveEvent;
-  'MAP_FLY_TO': MapFlyToEvent;
-  'CACHE_SELECTED': Geocache;
-  'EXPLORE_TOGGLED': boolean;
-  'DATA_REFRESHED': void;
-  'OPEN_SEARCH': void;
-}

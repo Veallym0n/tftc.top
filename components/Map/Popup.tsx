@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Geocache } from '../../types';
-import { CONFIG } from '../../constants';
+import { CACHE_TYPES, CONTAINER_TYPES } from '../../constants';
 import { IconShare } from '../Icons';
 import { openAppScheme } from '../../utils/geo';
-import { useMapStore } from '../../stores/useMapStore';
+import { useAppStore } from '../../stores/useAppStore';
 
 interface PopupProps {
   cache: Geocache;
@@ -13,10 +13,10 @@ interface PopupProps {
 }
 
 const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
-  const containerName = CONFIG.containerTypes[cache.containerType] || 'Other';
-  const typeConfig = CONFIG.cacheTypes[cache.geocacheType] || { name: 'Unknown', color: '#94a3b8' };
-  const openInApp = useMapStore((s) => s.settings.openInApp);
-  const showToast = useMapStore((s) => s.showToast);
+  const containerName = CONTAINER_TYPES[cache.containerType] || 'Other';
+  const typeConfig = CACHE_TYPES[cache.geocacheType] || { name: 'Unknown', color: '#94a3b8' };
+  const openInApp = useAppStore((s) => s.settings.openInApp);
+  const showToast = useAppStore((s) => s.showToast);
   const cacheUrl = openInApp
     ? `https://coord.info/${cache.code}`
     : `https://www.geocaching.com/geocache/${cache.code}`;

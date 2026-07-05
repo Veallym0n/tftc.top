@@ -1,8 +1,8 @@
 import React from 'react';
-import { useMapStore } from '../stores/useMapStore';
+import { useAppStore } from '../stores/useAppStore';
 
 const GlobalOverlays: React.FC = () => {
-  const { toastMsg, loading } = useMapStore();
+  const { toastMsg, loading } = useAppStore();
 
   const isVisible = !!toastMsg || loading;
   const displayMsg = toastMsg || (loading ? 'Loading...' : 'Ready');

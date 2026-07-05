@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { GCMap, MapLayer, MarkerTemplate, GCData, IGCData, GCMapRef, UserLocation } from '../../libs/tftc';
-import { Geocache, UserPin, MapType, MapFlyToEvent } from '../../types';
-import { MAP_LAYERS, ICON_URL_TEMPLATE } from '../../constants';
-import { wgs2gcj } from '../../utils/geo';
-import { eventService } from '../../services/eventService';
+import { GCMap, MapLayer, MarkerTemplate, GCData, IGCData, GCMapRef, UserLocation } from './leaflet';
+import { Geocache, UserPin, MapType } from '../../types';
+import { getConfig } from '../../config';
+import { wgs2gcj, gcj2wgs } from '../../utils/geo';
+import { useMapStore } from '../../stores/useMapStore';
 import Popup from './Popup';
 import PinPopup from './PinPopup';
-import { useMapLongPress } from '../../hooks/useMapLongPress';
+
 
 interface TFTCMapProps {
   mapType: MapType;
@@ -47,16 +47,82 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
 }) => {
   const mapRef = useRef<GCMapRef>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
-  const layerConfig = MAP_LAYERS[mapType] || MAP_LAYERS['gaode'];
+  const layerConfig = getConfig().mapLayers[mapType] || getConfig().mapLayers['gaode'];
   const isGCJ = layerConfig.std === 'gcj02';
 
-  // Custom Hooks
-  useMapLongPress({
-    map: mapInstance,
-    isEnabled: customPinsEnabled,
-    mapType,
-    onLongPress: onPinAdd
-  });
+  // Long press to add pin (inlined from useMapLongPress)
+  const longPressTimerRef = useRef<number | null>(null);
+  const longPressStartRef = useRef<{ x: number; y: number } | null>(null);
+  const longPressTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (!mapInstance) return;
+    const container = mapInstance.getContainer();
+    const getClientCoords = (e: MouseEvent | TouchEvent) => {
+      if (window.TouchEvent && e instanceof TouchEvent) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      const me = e as MouseEvent;
+      return { x: me.clientX, y: me.clientY };
+    };
+    const handleStart = (e: MouseEvent | TouchEvent) => {
+      if (!customPinsEnabled) return;
+      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+      if (mapInstance.getZoom() < getConfig().pinCreationMinZoom) return;
+      if (e instanceof MouseEvent && e.button !== 0) return;
+      longPressTriggeredRef.current = false;
+      longPressStartRef.current = getClientCoords(e);
+      longPressTimerRef.current = window.setTimeout(() => {
+        longPressTriggeredRef.current = true;
+        try {
+          const cp = mapInstance.mouseEventToContainerPoint({ clientX: longPressStartRef.current!.x, clientY: longPressStartRef.current!.y });
+          const latlng = mapInstance.containerPointToLatLng(cp);
+          if (latlng) {
+            if (navigator.vibrate) navigator.vibrate(50);
+            let { lat, lng } = latlng;
+            const cfg = getConfig().mapLayers[mapType] || getConfig().mapLayers['gaode'];
+            if (cfg.std === 'gcj02') [lat, lng] = gcj2wgs(lat, lng);
+            onPinAdd(lat, lng);
+          }
+        } catch (err) { console.error('Long press coord error', err); }
+      }, 800);
+    };
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+      if (!longPressTimerRef.current || !longPressStartRef.current) return;
+      const c = getClientCoords(e);
+      if (Math.abs(c.x - longPressStartRef.current.x) > 10 || Math.abs(c.y - longPressStartRef.current.y) > 10) {
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+      }
+    };
+    const handleEnd = (e: MouseEvent | TouchEvent) => {
+      if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null; }
+      if (longPressTriggeredRef.current && e.cancelable) e.preventDefault();
+      longPressStartRef.current = null;
+      longPressTriggeredRef.current = false;
+    };
+    const handleContext = (e: Event) => { if (customPinsEnabled) e.preventDefault(); };
+    container.addEventListener('mousedown', handleStart);
+    container.addEventListener('touchstart', handleStart, { passive: true });
+    container.addEventListener('mousemove', handleMove);
+    container.addEventListener('touchmove', handleMove, { passive: true });
+    container.addEventListener('mouseup', handleEnd);
+    container.addEventListener('mouseleave', handleEnd);
+    container.addEventListener('touchend', handleEnd);
+    container.addEventListener('touchcancel', handleEnd);
+    container.addEventListener('contextmenu', handleContext);
+    return () => {
+      container.removeEventListener('mousedown', handleStart);
+      container.removeEventListener('touchstart', handleStart);
+      container.removeEventListener('mousemove', handleMove);
+      container.removeEventListener('touchmove', handleMove);
+      container.removeEventListener('mouseup', handleEnd);
+      container.removeEventListener('mouseleave', handleEnd);
+      container.removeEventListener('touchend', handleEnd);
+      container.removeEventListener('touchcancel', handleEnd);
+      container.removeEventListener('contextmenu', handleContext);
+    };
+  }, [mapInstance, customPinsEnabled, mapType, onPinAdd]);
 
   // 1. Data Mapping (Memoized)
   const gcDataList: IGCData[] = useMemo(() => {
@@ -66,6 +132,7 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
       if (isGCJ) {
         [lat, lng] = wgs2gcj(lat, lng);
       }
+      console.log(`Cache ${c.code}: original (${c.latitude}, ${c.longitude}) -> display (${lat}, ${lng})`);
       return {
         ...c,
         id: c.code,
@@ -88,21 +155,21 @@ const TFTCMap: React.FC<TFTCMapProps> = ({
     });
   }, [onMapMoveStart, onMapMoveEnd]);
 
-  // 3. FlyTo Event — independent effect so isGCJ is always current
+  // 3. FlyTo via store (replaces MAP_FLY_TO event)
+  const flySeq = useMapStore((s) => s.flySeq);
+  const flyTarget = useMapStore((s) => s.flyTarget);
   useEffect(() => {
-    const handleFlyTo = (evt: MapFlyToEvent) => {
-      let { lat, lng } = evt;
-      if (isGCJ) {
-        [lat, lng] = wgs2gcj(lat, lng);
-      }
-      mapRef.current?.setView(lat, lng, evt.zoom ?? 16);
-    };
-    eventService.on('MAP_FLY_TO', handleFlyTo);
-    return () => eventService.off('MAP_FLY_TO', handleFlyTo);
-  }, [isGCJ]);
+    if (!flyTarget || !mapRef.current) return;
+    let { lat, lng } = flyTarget;
+    if (isGCJ) {
+      [lat, lng] = wgs2gcj(lat, lng);
+    }
+    mapRef.current.setView(lat, lng, flyTarget.zoom ?? 16);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flySeq]);
 
   const renderIcon = useCallback((cache: IGCData) => {
-    const iconUrl = ICON_URL_TEMPLATE.replace('{n}', String(cache.geocacheType));
+    const iconUrl = getConfig().iconUrlTemplate.replace('{n}', String(cache.geocacheType));
     return (
       <div className="marker-drop transition-transform active:scale-90 origin-bottom">
         <img src={iconUrl} className="w-[36px] h-[36px] drop-shadow-md" onError={(e) => e.currentTarget.style.display='none'}/>

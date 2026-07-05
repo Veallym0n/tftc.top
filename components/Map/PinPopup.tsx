@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserPin } from '../../types';
 import { formatDMM } from '../../utils/geo';
-import { useMapStore } from '../../stores/useMapStore';
+import { useAppStore } from '../../stores/useAppStore';
 
 interface PinPopupProps {
   pin: UserPin;
@@ -19,7 +19,7 @@ const PinPopup: React.FC<PinPopupProps> = ({ pin, onDelete, onUpdate }) => {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      useMapStore.getState().showToast('Coordinates copied!');
+      useAppStore.getState().showToast('Coordinates copied!');
     }).catch(err => console.error(err));
   };
 

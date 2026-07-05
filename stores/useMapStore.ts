@@ -1,231 +1,94 @@
-
 import { create } from 'zustand';
-import { Geocache, UserPin, StoredGpx, MapType } from '../types';
+import { MapType } from '../types';
 import { dbService } from '../services/db';
-import { cacheService } from '../services/cacheService';
+import { getConfig } from '../config';
+
+/* ================================================================
+ * useMapStore — 地图视图状态 + 探索模式
+ * mapType, 定位, 跟随, flyTo, 探索模式
+ * ================================================================ */
+
+// 探索模式 refs（模块私有）
+let _lastExploreSearch: { lat: number; lng: number } | null = null;
+let _exploreTimer: number | null = null;
 
 interface MapState {
-  // --- Data ---
-  caches: Geocache[];
-  userPins: UserPin[];
-  gpxFiles: StoredGpx[];
-  
-  // --- UI State ---
   mapType: MapType;
-  drawerOpen: boolean;
-  showLayerMenu: boolean;
-  loading: boolean;
-  toastMsg: string | null;
   isLocating: boolean;
   isFollowing: boolean;
+  isExploreMode: boolean;
+  /** 递增计数器，每次 flyTo 调用触发 TFTCMap 响应 */
+  flySeq: number;
+  flyTarget: { lat: number; lng: number; zoom?: number } | null;
 
-  // --- Settings ---
-  settings: {
-    showCircles: boolean;
-    customPinsEnabled: boolean;
-    autoSync: boolean;
-    clusterEnabled: boolean;
-    openInApp: boolean;
-    exploreRadius: number;
-  };
-
-  // --- Actions ---
-  setCaches: (caches: Geocache[] | ((prev: Geocache[]) => Geocache[])) => void;
   setMapType: (type: MapType) => void;
-  setDrawerOpen: (open: boolean) => void;
-  setShowLayerMenu: (show: boolean) => void;
-  setLoading: (loading: boolean) => void;
-  setToast: (msg: string | null) => void;
-  showToast: (msg: string) => void; // Helper with timeout
   setIsLocating: (isLocating: boolean) => void;
   setIsFollowing: (isFollowing: boolean) => void;
-  
-  // Settings Actions
-  initSettings: () => Promise<void>;
-  toggleSetting: (key: 'showCircles' | 'customPinsEnabled' | 'autoSync' | 'clusterEnabled' | 'openInApp', val: boolean) => void;
-  setExploreRadius: (radius: number) => void;
-
-  // Data Actions (Async with DB)
-  loadUserPins: () => Promise<void>;
-  addUserPin: (lat: number, lng: number) => Promise<void>;
-  addTempPin: (lat: number, lng: number, note: string) => number; // Returns ID
-  deleteUserPin: (id: number) => Promise<void>;
-  updateUserPin: (id: number, note: string) => Promise<void>;
-  
-  loadGpxList: () => Promise<void>;
-  deleteGpx: (id: number) => Promise<void>;
+  setExploreMode: (v: boolean) => void;
+  toggleExplore: () => void;
+  flyTo: (lat: number, lng: number, zoom?: number) => void;
+  onMapMoveEnd: (lat: number, lng: number, zoom: number) => void;
 }
 
 export const useMapStore = create<MapState>((set, get) => ({
-  // Initial State
-  caches: [],
-  userPins: [],
-  gpxFiles: [],
-  mapType: 'gaode',
-  drawerOpen: false,
-  showLayerMenu: false,
-  loading: false,
-  toastMsg: null,
+  mapType: (getConfig().defaultMapLayer || 'gaode') as MapType,
   isLocating: false,
   isFollowing: true,
-  settings: {
-    showCircles: false,
-    customPinsEnabled: false,
-    autoSync: true,
-    clusterEnabled: true,
-    openInApp: false,
-    exploreRadius: 3,
-  },
+  isExploreMode: false,
+  flySeq: 0,
+  flyTarget: null,
 
-  // --- Basic Setters ---
-  setCaches: (updater) => set((state) => ({ 
-      caches: typeof updater === 'function' ? updater(state.caches) : updater 
-  })),
-  
   setMapType: (mapType) => {
-      set({ mapType });
-      dbService.setSetting('mapType', mapType); // Save to DB
+    set({ mapType });
+    dbService.setSetting('mapType', mapType);
   },
 
-  setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
-  setShowLayerMenu: (showLayerMenu) => set({ showLayerMenu }),
-  setLoading: (loading) => set({ loading }),
-  setToast: (toastMsg) => {
-    set({ toastMsg });
-    if ((window as any)._toastTimeout) {
-      clearTimeout((window as any)._toastTimeout);
-    }
-  },
   setIsLocating: (isLocating) => set({ isLocating, isFollowing: isLocating }),
+
   setIsFollowing: (isFollowing) => set({ isFollowing }),
 
-  showToast: (msg) => {
-    set({ toastMsg: msg });
-    if ((window as any)._toastTimeout) {
-      clearTimeout((window as any)._toastTimeout);
+  flyTo: (lat, lng, zoom) =>
+    set((s) => ({ flySeq: s.flySeq + 1, flyTarget: { lat, lng, zoom } })),
+
+  setExploreMode: (v) => set({ isExploreMode: v }),
+
+  toggleExplore: async () => {
+    const [{ useCacheStore }, { useAppStore }] = await Promise.all([
+      import('./useCacheStore'),
+      import('./useAppStore'),
+    ]);
+    const status = useCacheStore.getState().syncStatus;
+    if (status === 'loading cache' || status === 'processing cache data') {
+      useAppStore.getState().showToast('数据正在下载中，请稍候...');
+      return;
     }
-    (window as any)._toastTimeout = setTimeout(() => set({ toastMsg: null }), 3000);
-  },
-
-  // --- Settings Logic ---
-  initSettings: async () => {
-    try {
-        const [circles, pins, sync, cluster, openInApp, radius, savedMapType] = await Promise.all([
-            dbService.getSetting('showCircles', false),
-            dbService.getSetting('customPinsEnabled', false),
-            dbService.getSetting('autoSync', true),
-            dbService.getSetting('clusterEnabled', true),
-            dbService.getSetting('openInApp', false),
-            dbService.getSetting('exploreRadius', 3),
-            dbService.getSetting<MapType>('mapType', 'gaode') // Load mapType, default to gaode
-        ]);
-        
-        set({ 
-            mapType: savedMapType,
-            settings: { 
-                showCircles: circles, 
-                customPinsEnabled: pins, 
-                autoSync: sync, 
-                clusterEnabled: cluster,
-                openInApp: openInApp,
-                exploreRadius: radius 
-            } 
-        });
-
-        // Trigger side effects
-        cacheService.initDailySync(sync);
-    } catch (e) {
-        console.error("Failed to load settings", e);
-    }
-  },
-
-  toggleSetting: (key, val) => {
-    set((state) => ({ settings: { ...state.settings, [key]: val } }));
-    dbService.setSetting(key, val);
-    
-    // Side effects
-    if (key === 'autoSync' && val) cacheService.initDailySync(true);
-    if (key === 'customPinsEnabled' && val) get().showToast('Long press on map enabled');
-    if (key === 'clusterEnabled') get().showToast(val ? 'Clustering enabled' : 'Clustering disabled');
-  },
-
-  setExploreRadius: (val) => {
-    set((state) => ({ settings: { ...state.settings, exploreRadius: val } }));
-    dbService.setSetting('exploreRadius', val);
-  },
-
-  // --- Data Logic (DB Interactions) ---
-  
-  loadUserPins: async () => {
-      const pins = await dbService.getAll();
-      set({ userPins: pins });
-  },
-
-  addUserPin: async (lat, lng) => {
-      if (!get().settings.customPinsEnabled) return;
-      const newPin: UserPin = { 
-          id: Date.now(), 
-          lat, 
-          lng, 
-          note: '', 
-          create_at: Date.now() 
-      };
-      await dbService.add(newPin);
-      set((state) => ({ userPins: [...state.userPins, newPin] }));
-  },
-
-  addTempPin: (lat, lng, note) => {
-      const id = Date.now();
-      const newPin: UserPin = {
-          id,
-          lat,
-          lng,
-          note,
-          create_at: id
-      };
-      set((state) => ({ userPins: [...state.userPins, newPin] }));
-      return id;
-  },
-
-  deleteUserPin: async (id) => {
-      await dbService.delete(id);
-      set((state) => ({ userPins: state.userPins.filter(p => p.id !== id) }));
-  },
-
-  updateUserPin: async (id, note) => {
-      const pin = get().userPins.find(p => p.id === id);
-      if (!pin) return;
-      const updatedPin = { ...pin, note };
-      
-      try {
-          await dbService.updatePin(updatedPin);
-          set((state) => ({ 
-              userPins: state.userPins.map(p => p.id === id ? updatedPin : p) 
-          }));
-          get().showToast('Note saved');
-      } catch (e) {
-          console.error(e);
-          get().showToast('Failed to save note');
+    set((s) => {
+      const next = !s.isExploreMode;
+      if (next) {
+        const r = useAppStore.getState().settings.exploreRadius as number;
+        useAppStore.getState().showToast(`探索模式: 拖拽地图搜索 (${r}km)`);
+      } else {
+        _lastExploreSearch = null;
       }
+      return { isExploreMode: next };
+    });
   },
 
-  loadGpxList: async () => {
-      try {
-          const list = await cacheService.getGpxList();
-          set({ gpxFiles: list });
-      } catch (e: any) {
-          get().showToast('Error:' + e.message)
-          console.error(e);
+  onMapMoveEnd: (lat, lng, zoom) => {
+    const { isExploreMode } = get();
+    if (!isExploreMode || zoom <= 10) return;
+    if (_exploreTimer) clearTimeout(_exploreTimer);
+    _exploreTimer = window.setTimeout(async () => {
+      if (_lastExploreSearch) {
+        const dLat = Math.abs(lat - _lastExploreSearch.lat);
+        const dLng = Math.abs(lng - _lastExploreSearch.lng);
+        if (dLat < 0.002 && dLng < 0.002) return;
       }
+      _lastExploreSearch = { lat, lng };
+      const { useCacheStore } = await import('./useCacheStore');
+      const { useAppStore } = await import('./useAppStore');
+      const r = useAppStore.getState().settings.exploreRadius as number;
+      await useCacheStore.getState().exploreNearby(lat, lng, r);
+    }, 400);
   },
-
-  deleteGpx: async (id) => {
-      try {
-          await cacheService.deleteGpx(id);
-          get().loadGpxList(); // Refresh list
-          get().showToast('GPX deleted');
-      } catch (e: any) {
-          get().showToast('Error: ' + e.message);
-      }
-  }
 }));
