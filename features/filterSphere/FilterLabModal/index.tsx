@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { useFilterSphere } from '@fn-sphere/filter';
-import { Modal } from '../../../libs/common/Modal';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
-import { useMapStore } from '../../../stores/useMapStore';
+import { Modal } from '../../../components/modals/Modal';
+import { useAppStore } from '../../../stores/useAppStore';
+import { useCacheStore } from '../../../stores/useCacheStore';
 import { createFlattenFilterGroup } from '../defaultRule';
 import { getFilterModalText, getFilterSphereLocaleText } from '../locale';
 import { normalizeOfflineCache } from '../normalize';
@@ -19,15 +19,14 @@ import { useOfflineCaches } from './useOfflineCaches';
 const FilterLabModal = NiceModal.create(() => {
   const modal = useModal();
   const [activeTab, setActiveTab] = useState<'builder' | 'preview'>('builder');
-  const lang = useLanguageStore((state) => state.lang);
-  const setCaches = useMapStore((state) => state.setCaches);
-  const setDrawerOpen = useMapStore((state) => state.setDrawerOpen);
-  const showToast = useMapStore((state) => state.showToast);
+  const setCaches = useCacheStore((state) => state.setCaches);
+  const setDrawerOpen = useAppStore((state) => state.setDrawerOpen);
+  const showToast = useAppStore((state) => state.showToast);
   const ruleValue = useOfflineFilterRuleStore((state) => state.ruleValue);
   const setRuleValue = useOfflineFilterRuleStore((state) => state.setRuleValue);
 
-  const localeText = useMemo(() => getFilterSphereLocaleText(lang), [lang]);
-  const text = useMemo(() => getFilterModalText(lang), [lang]);
+  const localeText = useMemo(() => getFilterSphereLocaleText('zh'), []);
+  const text = useMemo(() => getFilterModalText('zh'), []);
   const { offlineCaches, isLoading, errorMessage } = useOfflineCaches(
     text.noErrorDetail,
   );

@@ -1,4 +1,4 @@
-import { defaultModalClasses } from '../../../libs/common/Modal';
+import { defaultModalClasses } from '../../../components/modals/Modal';
 
 export const modalClasses = {
   ...defaultModalClasses,

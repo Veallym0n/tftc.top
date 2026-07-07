@@ -1,5 +1,6 @@
 import { enUS, zhCN } from '@fn-sphere/filter/locales';
-import { Language } from '../../utils/i18n';
+
+type Language = 'en' | 'zh';
 
 const customEn = {
   'filter.field.code': 'GC Code',
