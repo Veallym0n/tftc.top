@@ -46,7 +46,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
   return (
     // Outer Container: Needs extra padding at bottom/right for the hard shadow to not get clipped by Leaflet's overflow handling if any
     <div className="pb-2 pr-2"> 
-        <div className="bg-white w-[280px] font-sans text-slate-900 border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.45)]">
+      <div className="w-[320px] font-sans text-slate-900 border-2 border-black bg-transparent shadow-[6px_6px_0px_0px_rgba(0,0,0,0.45)]">
           {/* Header Band */}
           <div 
             className="flex justify-between items-center px-3 py-1.5 border-b-2 border-black relative group" 
@@ -74,7 +74,7 @@ const Popup: React.FC<PopupProps> = ({ cache, lat, lng }) => {
             </div>
           </div>
           
-          <div className="p-3.5 bg-white">
+          <div className="p-3.5 bg-white/85 backdrop-blur-[2px]">
             {/* Title */}
             <a 
               href={cacheUrl} 
