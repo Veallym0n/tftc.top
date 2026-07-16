@@ -12,8 +12,10 @@ export function gcj2wgs(lat: number, lon: number): [number, number] {
 }
 
 export function wgs2bd(lat: number, lon: number): [number, number] {
-  const [lng, latR] = coordtransform.wgs84tobd09(lon, lat);
-  return [latR, lng];
+  // coordtransform 没有直接的 wgs84 → bd09，需要两步: wgs84 → gcj02 → bd09
+  const [gLng, gLat] = coordtransform.wgs84togcj02(lon, lat);
+  const [bLng, bLat] = coordtransform.gcj02tobd09(gLng, gLat);
+  return [bLat, bLng];
 }
 
 export function openAppScheme(lat: number, lon: number, name: string, code: string, app: 'amap' | 'baidu') {

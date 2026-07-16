@@ -49,6 +49,7 @@ const SmartCoords = NiceModal.create(({ externalTarget }: SmartCoordsProps) => {
   const targetName = externalTarget?.name || '目标点';
 
   const handleLaunchBaidu = () => {
+    console.log('Launching Baidu Map with coords:', coords);
     if (!coords) return;
     openAppScheme(coords.lat, coords.lng, targetName, 'TFTC-TOOL', 'baidu');
   };
