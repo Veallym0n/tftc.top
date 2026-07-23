@@ -1,10 +1,6 @@
-import { getFilterModalText } from '../locale';
 import { cx } from '../classNames';
 
-type FilterModalText = ReturnType<typeof getFilterModalText>;
-
 interface FilterModalActionsProps {
-  text: FilterModalText;
   isApplyDisabled: boolean;
   showReset?: boolean;
   onReset: () => void;
@@ -13,7 +9,6 @@ interface FilterModalActionsProps {
 }
 
 export const FilterModalActions = ({
-  text,
   isApplyDisabled,
   showReset = true,
   onReset,
@@ -35,7 +30,7 @@ export const FilterModalActions = ({
           onClick={onReset}
           className="min-w-0 truncate rounded-xl border-2 border-memphis-dark bg-cream px-3 py-2.5 text-xs font-bold text-slate-800 transition-all hover:-translate-y-0.5 hover:bg-memphis-yellow active:translate-y-0.5 sm:px-4 sm:py-3 sm:text-sm"
         >
-          {text.reset}
+          重置规则
         </button>
       )}
       <button
@@ -43,7 +38,7 @@ export const FilterModalActions = ({
         onClick={onClose}
         className="min-w-0 truncate rounded-xl border-2 border-memphis-dark bg-white px-3 py-2.5 text-xs font-bold text-slate-800 transition-all hover:-translate-y-0.5 hover:bg-slate-100 active:translate-y-0.5 sm:px-4 sm:py-3 sm:text-sm"
       >
-        {text.close}
+        关闭
       </button>
       <button
         type="button"
@@ -54,7 +49,7 @@ export const FilterModalActions = ({
           showReset && 'col-span-2 sm:ml-auto',
         )}
       >
-        {text.apply}
+        应用到地图
       </button>
     </div>
   );

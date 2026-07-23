@@ -5,7 +5,7 @@ import { Modal } from '../../../components/modals/Modal';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useCacheStore } from '../../../stores/useCacheStore';
 import { createFlattenFilterGroup } from '../defaultRule';
-import { getFilterModalText, getFilterSphereLocaleText } from '../locale';
+import { getFilterSphereLocaleText } from '../locale';
 import { normalizeOfflineCache } from '../normalize';
 import { filterFnList, offlineCacheFilterSchema } from '../schema';
 import { useOfflineFilterRuleStore } from '../useOfflineFilterRuleStore';
@@ -26,10 +26,8 @@ const FilterLabModal = NiceModal.create(() => {
   const setRuleValue = useOfflineFilterRuleStore((state) => state.setRuleValue);
 
   const localeText = useMemo(() => getFilterSphereLocaleText(), []);
-  const text = useMemo(() => getFilterModalText(), []);
-  const { offlineCaches, isLoading, errorMessage } = useOfflineCaches(
-    text.noErrorDetail,
-  );
+  const { offlineCaches, isLoading, errorMessage } =
+    useOfflineCaches('未知错误');
 
   const { predicate, totalRuleCount, validRuleCount, reset, context } =
     useFilterSphere({
@@ -66,7 +64,7 @@ const FilterLabModal = NiceModal.create(() => {
 
     setCaches(nextCaches);
     setDrawerOpen(false);
-    showToast(text.applyToast.replace('{count}', String(nextCaches.length)));
+    showToast(`已将 ${nextCaches.length} 个离线藏点应用到地图`);
     modal.remove();
   };
 
@@ -75,7 +73,7 @@ const FilterLabModal = NiceModal.create(() => {
       {...modalClasses}
       isOpen={modal.visible}
       onClose={modal.remove}
-      title={text.title}
+      title="离线过滤工作台"
       footer={null}
     >
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -96,7 +94,7 @@ const FilterLabModal = NiceModal.create(() => {
                 : 'bg-white text-slate-500',
             )}
           >
-            {text.tabBuilder}
+            规则
           </button>
           <button
             type="button"
@@ -110,7 +108,7 @@ const FilterLabModal = NiceModal.create(() => {
                 : 'bg-white text-slate-500',
             )}
           >
-            {text.tabPreview}
+            预览
             <span className="ml-1 rounded-md bg-memphis-dark/10 px-1.5 py-0.5 text-xs tabular-nums">
               {filteredRecords.length.toLocaleString()}
             </span>
@@ -127,7 +125,6 @@ const FilterLabModal = NiceModal.create(() => {
             )}
           >
             <FilterBuilderSection
-              text={text}
               isLoading={isLoading}
               errorMessage={errorMessage}
               offlineCacheCount={offlineCaches.length}
@@ -143,7 +140,6 @@ const FilterLabModal = NiceModal.create(() => {
             )}
           >
             <FilterPreviewPanel
-              text={text}
               localeText={localeText}
               filteredRecords={filteredRecords}
               previewRecords={previewRecords}
@@ -161,7 +157,6 @@ const FilterLabModal = NiceModal.create(() => {
         {/* Pinned action footer — narrow only */}
         <div className="lg:hidden">
           <FilterModalActions
-            text={text}
             isApplyDisabled={filteredRecords.length === 0}
             showReset={false}
             onReset={() => reset()}

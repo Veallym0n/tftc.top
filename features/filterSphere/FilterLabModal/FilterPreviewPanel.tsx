@@ -1,13 +1,11 @@
-import { getFilterModalText, getFilterSphereLocaleText } from '../locale';
+import { getFilterSphereLocaleText } from '../locale';
 import { OfflineCacheFilterRecord } from '../types';
 import { FilterModalActions } from './FilterModalActions';
 import { PreviewCacheCard } from './PreviewCacheCard';
 
-type FilterModalText = ReturnType<typeof getFilterModalText>;
 type FilterSphereLocaleText = ReturnType<typeof getFilterSphereLocaleText>;
 
 interface FilterPreviewPanelProps {
-  text: FilterModalText;
   localeText: FilterSphereLocaleText;
   filteredRecords: OfflineCacheFilterRecord[];
   previewRecords: OfflineCacheFilterRecord[];
@@ -21,13 +19,11 @@ interface FilterPreviewPanelProps {
 }
 
 interface FilterPreviewPanelHeaderProps {
-  text: FilterModalText;
   matchedCount: number;
   previewSummary: string;
 }
 
 const FilterPreviewPanelHeader = ({
-  text,
   matchedCount,
   previewSummary,
 }: FilterPreviewPanelHeaderProps) => {
@@ -35,10 +31,10 @@ const FilterPreviewPanelHeader = ({
     <div className="min-w-0 border-b-2 border-memphis-dark bg-white px-3 py-2 sm:px-4 sm:py-4">
       <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-3">
         <div className="min-w-0 truncate text-xs font-black uppercase tracking-wide text-slate-400">
-          {text.previewTitle}
+          结果预览
         </div>
         <span className="shrink-0 truncate text-right text-[10px] font-black uppercase tracking-wide text-slate-500 sm:max-w-[60%] sm:rounded-lg sm:border-2 sm:border-memphis-dark sm:bg-cream sm:px-2 sm:py-1 sm:text-slate-700">
-          {text.matched}: {matchedCount.toLocaleString()}
+          匹配结果: {matchedCount.toLocaleString()}
         </span>
       </div>
       <p className="mt-2 hidden break-words text-sm font-bold leading-snug text-slate-700 sm:block">
@@ -49,7 +45,6 @@ const FilterPreviewPanelHeader = ({
 };
 
 export const FilterPreviewPanel = ({
-  text,
   localeText,
   filteredRecords,
   previewRecords,
@@ -61,17 +56,15 @@ export const FilterPreviewPanel = ({
   onClose,
   onApply,
 }: FilterPreviewPanelProps) => {
-  const previewSummary = text.previewSummary
-    .replace('{matched}', filteredRecords.length.toLocaleString())
-    .replace('{total}', offlineCacheCount.toLocaleString())
-    .replace('{valid}', String(validRuleCount))
-    .replace('{rules}', String(totalRuleCount));
+  const previewSummary =
+    `当前匹配 ${filteredRecords.length.toLocaleString()} / ` +
+    `${offlineCacheCount.toLocaleString()} 个离线藏点 · ` +
+    `有效规则 ${validRuleCount}/${totalRuleCount}`;
 
   return (
     <aside className="flex min-h-0 min-w-0 overflow-hidden flex-col bg-slate-50">
       <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
         <FilterPreviewPanelHeader
-          text={text}
           matchedCount={filteredRecords.length}
           previewSummary={previewSummary}
         />
@@ -79,7 +72,7 @@ export const FilterPreviewPanel = ({
         <div className="grid gap-2 p-2.5 sm:gap-3 sm:p-4 sm:pr-3">
           {!isLoading && previewRecords.length === 0 && (
             <div className="rounded-2xl border-2 border-memphis-dark bg-white p-4 text-sm font-bold text-slate-500 shadow-memphis-sm">
-              {text.previewEmpty}
+              当前规则没有匹配到任何藏点。
             </div>
           )}
 
@@ -95,7 +88,6 @@ export const FilterPreviewPanel = ({
 
       <div className="hidden lg:block">
         <FilterModalActions
-          text={text}
           isApplyDisabled={filteredRecords.length === 0}
           onReset={onReset}
           onClose={onClose}

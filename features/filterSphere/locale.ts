@@ -25,27 +25,6 @@ const filterLocale = {
   ...customZh,
 } as const;
 
-const modalText = {
-  title: '离线过滤工作台',
-  subtitle: '基于 IndexedDB 里的离线全库构建过滤规则，然后把结果一次性应用到地图。',
-  loading: '正在加载离线缓存数据...',
-  empty: '当前没有离线缓存数据。请先下载离线全量数据，再打开这个工具。',
-  error: '加载离线缓存数据失败。',
-  total: '离线总数',
-  matched: '匹配结果',
-  rules: '有效规则',
-  previewTitle: '结果预览',
-  tabBuilder: '规则',
-  tabPreview: '预览',
-  previewSummary: '当前匹配 {matched} / {total} 个离线藏点 · 有效规则 {valid}/{rules}',
-  previewEmpty: '当前规则没有匹配到任何藏点。',
-  reset: '重置规则',
-  close: '关闭',
-  apply: '应用到地图',
-  applyToast: '已将 {count} 个离线藏点应用到地图',
-  noErrorDetail: '未知错误',
-} as const;
-
 export const getFilterSphereLocaleText = () => {
   return (key: string) => {
     if (key in filterLocale) {
@@ -53,8 +32,4 @@ export const getFilterSphereLocaleText = () => {
     }
     return key;
   };
-};
-
-export const getFilterModalText = () => {
-  return modalText;
 };
