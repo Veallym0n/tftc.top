@@ -1,21 +1,6 @@
 import { zhCN } from '@fn-sphere/filter/locales';
 
 const customZh = {
-  'filter.field.code': 'GC 编码',
-  'filter.field.name': '名称',
-  'filter.field.owner': '拥有者',
-  'filter.field.cacheType': '藏点类型',
-  'filter.field.containerType': '容器类型',
-  'filter.field.difficulty': '难度',
-  'filter.field.terrain': '地形',
-  'filter.field.latitude': '纬度',
-  'filter.field.longitude': '经度',
-  'filter.field.favoritePoints': '收藏分',
-  'filter.field.placedDate': '发布日期',
-  'filter.field.hasLastFound': '是否有最近发现',
-  'filter.field.lastFoundDate': '最近发现日期',
-  'filter.field.isEventLike': '是否活动类',
-  'filter.field.isFTFLike': '是否像 FTF',
   traditional: '传统',
   multi: '多步',
   mystery: '谜题',

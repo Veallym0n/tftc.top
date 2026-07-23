@@ -36,22 +36,22 @@ const cacheRatingSchema = (description: string) => {
 };
 
 export const offlineCacheFilterSchema = z.object({
-  name: z.string().describe('filter.field.name'),
-  ownerUsername: z.string().describe('filter.field.owner'),
-  cacheType: z.enum(CACHE_TYPE_VALUES).describe('filter.field.cacheType'),
-  containerType: z.enum(CONTAINER_TYPE_VALUES).describe('filter.field.containerType'),
-  difficulty: cacheRatingSchema('filter.field.difficulty'),
-  terrain: cacheRatingSchema('filter.field.terrain'),
-  favoritePoints: z.number().describe('filter.field.favoritePoints'),
-  placedDate: z.date().describe('filter.field.placedDate'),
-  lastFoundDate: z.date().describe('filter.field.lastFoundDate'),
-  code: z.string().describe('filter.field.code'),
-  latitude: z.number().describe('filter.field.latitude'),
-  longitude: z.number().describe('filter.field.longitude'),
+  name: z.string().describe('名称'),
+  ownerUsername: z.string().describe('拥有者'),
+  cacheType: z.enum(CACHE_TYPE_VALUES).describe('藏点类型'),
+  containerType: z.enum(CONTAINER_TYPE_VALUES).describe('容器类型'),
+  difficulty: cacheRatingSchema('难度'),
+  terrain: cacheRatingSchema('地形'),
+  favoritePoints: z.number().describe('收藏分'),
+  placedDate: z.date().describe('发布日期'),
+  lastFoundDate: z.date().describe('最近发现日期'),
+  code: z.string().describe('GC 编码'),
+  latitude: z.number().describe('纬度'),
+  longitude: z.number().describe('经度'),
 
-  hasLastFound: z.boolean().describe('filter.field.hasLastFound'),
-  isEventLike: z.boolean().describe('filter.field.isEventLike'),
-  isFTFLike: z.boolean().describe('filter.field.isFTFLike'),
+  hasLastFound: z.boolean().describe('是否有最近发现'),
+  isEventLike: z.boolean().describe('是否活动类'),
+  isFTFLike: z.boolean().describe('是否像 FTF'),
 });
 
 export type OfflineCacheFilterSchema = z.infer<typeof offlineCacheFilterSchema>;

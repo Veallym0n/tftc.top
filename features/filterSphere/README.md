@@ -42,6 +42,6 @@ Three layers:
 
 ## Extending
 
-**Add a filterable field** — extend `offlineCacheFilterSchema` (`schema.ts`), add the property to `OfflineCacheFilterItem` (`types.ts`), populate it in `normalizeOfflineCache` (`normalize.ts`), and add the label keys to `locale.ts`.
+**Add a filterable field** — extend `offlineCacheFilterSchema` (`schema.ts`) with a Chinese `.describe()` label, add the property to `OfflineCacheFilterItem` (`types.ts`), and populate it in `normalizeOfflineCache` (`normalize.ts`). Add a `locale.ts` entry only when introducing a new enum value.
 
 **Add a custom input widget** — tag the field with a unique `meta.filterInput` marker, implement a `DataInputViewSpec` whose `match` checks for that marker (see `theme/RatingInput.tsx`), and register it in `dataInputViews` of `filterSphereTheme`.
