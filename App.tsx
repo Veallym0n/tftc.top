@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NiceModal from '@ebay/nice-modal-react';
-import TFTCMap from './components/map/TFTCMap';
+import TFTCMap from './components/Map/TFTCMap';
 import MapControls from './components/controls/MapControls';
 import AppDrawer from './components/drawer/AppDrawer';
 import GlobalOverlays from './components/GlobalOverlays';
