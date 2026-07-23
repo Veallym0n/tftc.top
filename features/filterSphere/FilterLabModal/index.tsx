@@ -25,8 +25,8 @@ const FilterLabModal = NiceModal.create(() => {
   const ruleValue = useOfflineFilterRuleStore((state) => state.ruleValue);
   const setRuleValue = useOfflineFilterRuleStore((state) => state.setRuleValue);
 
-  const localeText = useMemo(() => getFilterSphereLocaleText('zh'), []);
-  const text = useMemo(() => getFilterModalText('zh'), []);
+  const localeText = useMemo(() => getFilterSphereLocaleText(), []);
+  const text = useMemo(() => getFilterModalText(), []);
   const { offlineCaches, isLoading, errorMessage } = useOfflineCaches(
     text.noErrorDetail,
   );

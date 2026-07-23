@@ -31,14 +31,14 @@ Three layers:
 
 1. **Data** (`schema.ts`, `types.ts`, `normalize.ts`) — Zod schema describing the filterable shape, plus a normalizer that flattens raw `Geocache` rows (numeric type/container ids, ISO date strings) into that shape.
 2. **State** (`useOfflineFilterRuleStore.ts`) — Zustand store that survives modal close/open by holding the active `FilterGroup`.
-3. **UI** (`FilterLabModal/`, `theme/`, `locale.ts`) — `NiceModal` entry that mounts FilterSphere's `FilterBuilder` with a Memphis-styled theme and a bilingual (en/zh) locale. Renders a live preview list and an Apply button.
+3. **UI** (`FilterLabModal/`, `theme/`, `locale.ts`) — `NiceModal` entry that mounts FilterSphere's `FilterBuilder` with a Memphis-styled theme and a Chinese locale. Renders a live preview list and an Apply button.
 
 ## Custom integrations with Filter Sphere
 
 - **Theming** — `theme/index.tsx` builds a `filterSphereTheme` via `createFilterTheme`, supplying app-styled `button` / `input` / `select` / `option` primitives.
 - **Flatten layout** — `theme/templates.tsx` overrides the `SingleFilter`, `FilterGroupContainer`, and `RuleJoiner` templates so every rule renders as a single row with inline `And` / `Or` / `✕` controls (no nested group chrome). The initial rule tree comes from `createFlattenFilterGroup` in `defaultRule.ts`, passed to `useFilterSphere` as `defaultRule`.
 - **Custom input widget** — Difficulty/Terrain are tagged in the schema with `meta.filterInput = CACHE_RATING_FILTER_INPUT`. The `cacheRatingInputView` (a `DataInputViewSpec`) matches that marker and renders a half-star rating control instead of the default number input.
-- **Localization** — `locale.ts` layers app-specific strings on top of the library's built-in `enUS` / `zhCN` locales and feeds them to `useFilterSphere` via `getLocaleText`.
+- **Localization** — `locale.ts` layers app-specific strings on top of the library's built-in `zhCN` locale and feeds them to `useFilterSphere` via `getLocaleText`.
 
 ## Extending
 
